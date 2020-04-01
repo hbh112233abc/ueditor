@@ -1,0 +1,35 @@
+{
+    "name": "bingher/ueditor",
+    "description": "ueditor for thinkphp6",
+    "type": "library",
+    "minimum-stability": "dev",
+    "require": {
+        "topthink/framework": "^6.0.0",
+        "topthink/think-image": "^1.0"
+    },
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "bingher\\ueditor\\": "src/"
+        },
+        "files": [
+            "src/helper.php"
+        ]
+    },
+    "extra": {
+        "think": {
+            "services": [
+                "bingher\\ueditor\\UeditorService"
+            ],
+            "config":{
+                "ueditor": "src/config.php"
+            }            
+        }
+    },
+    "authors": [
+        {
+            "name": "hbh112233abc",
+            "email": "hbh112233abc@163.com"
+        }
+    ]
+}
