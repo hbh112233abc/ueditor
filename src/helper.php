@@ -11,7 +11,7 @@
 function ue_view(string $id='ueditor',string $content='',array $config=[]){
     $default = [
         "serverUrl" => '/ueditor/index',
-        "UEDITOR_HOME_URL"=>'/../vendor/bingher/ueditor/assets/ueditor/',
+        "UEDITOR_HOME_URL"=>'/static/bingher/ueditor/ueditor/',
         "initialFrameHeight"=>600,
         "autoHeightEnabled"=>true,
         "maximumWords"=>200000,
@@ -22,8 +22,8 @@ function ue_view(string $id='ueditor',string $content='',array $config=[]){
     $result = <<<tpl
 <script id="{$id}" type="text/plain"></script>
 <!-- 引入ueditor的js代码 -->
-<script src="/../vendor/bingher/ueditor/assets/ueditor/ueditor.config.js"></script>
-<script src="/../vendor/bingher/ueditor/assets/ueditor/ueditor.all.js"></script>
+<script src="/static/bingher/ueditor/ueditor/ueditor.config.js"></script>
+<script src="/static/bingher/ueditor/ueditor/ueditor.all.js"></script>
 <script>
     //ueditor代码
     var ue = UE.getEditor("{$id}",{$configJson});

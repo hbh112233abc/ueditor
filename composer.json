@@ -24,7 +24,10 @@
             "config":{
                 "ueditor": "src/config.php"
             }            
-        }
+        },
+        "post-package-install":"bingher\\ueditor\\Recource::install",
+        "post-package-update":"bingher\\ueditor\\Recource::install",
+        "post-package-uninstall":"bingher\\ueditor\\Recource::uninstall"
     },
     "authors": [
         {
