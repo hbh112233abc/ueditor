@@ -1,6 +1,9 @@
 <?php
 namespace bingher\ueditor\util;
+<<<<<<< HEAD
 
+=======
+>>>>>>> 3f92b042d030c8e68abbdd997b09ee7e97a63ca6
 /**
  * 操纵文件类
  * 
@@ -15,8 +18,12 @@ namespace bingher\ueditor\util;
  * FileUtil::unlinkFile('b/d/3.exe');             测试删除文件        删除b/d/3.exe文件
  * FileUtil::unlinkDir('d');                      测试删除文件夹 删除d文件夹
  */
+<<<<<<< HEAD
 class FileUtil 
 {
+=======
+class FileUtil {
+>>>>>>> 3f92b042d030c8e68abbdd997b09ee7e97a63ca6
     /**
      * 建立文件夹
      *
@@ -187,7 +194,12 @@ class FileUtil
                 FileUtil :: copyDir($oldDir . $file, $aimDir . $file, $overWrite);
             }
         }
+<<<<<<< HEAD
         return closedir($dirHandle);
+=======
+        closedir($dirHandle);
+        return true;
+>>>>>>> 3f92b042d030c8e68abbdd997b09ee7e97a63ca6
     }
 
     /**
