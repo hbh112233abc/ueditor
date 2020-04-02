@@ -9,6 +9,6 @@ class UeditorService extends Service
 {
     public function boot(Route $route)
     {
-        $route->get('ueditor/index', "\\bingher\\ueditor\\controller\\Ueditor@index");
+        $route->rule('ueditor/index', "\\bingher\\ueditor\\controller\\Ueditor@index");
     }
 }

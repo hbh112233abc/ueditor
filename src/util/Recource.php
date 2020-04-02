@@ -15,8 +15,8 @@ class Recource
      */
     static public function install()
     {
-        $assets = __DIR__.'/../../assets/';
-        $static = root_path().'/public/static/bingher/ueditor/';
+        $assets = __DIR__.'/../../assets/';        
+        $static = root_path().'/public/static/bingher/ueditor/';        
         $res = FileUtil::copyDir($assets,$static,true);
 
         if(!$res){
@@ -33,7 +33,7 @@ class Recource
     static public function uninstall()
     {
         $parentDir = root_path().'/public/static/bingher/';
-        $ueditorDir = $parentDir.'/ueditor/';
+        $ueditorDir = $parentDir.'ueditor/';
         $res = FileUtil::unlinkDir($ueditorDir);
         if($res){
             if(FileUtil::isDirEmpty($parentDir)){

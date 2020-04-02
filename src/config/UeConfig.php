@@ -5,7 +5,7 @@ use think\facade\Config;
 /**
  * 配置信息
  */
-class Config
+class UeConfig
 {
     protected $config;
     protected $ueditor;

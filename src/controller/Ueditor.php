@@ -1,7 +1,7 @@
 <?php
 namespace bingher\ueditor\controller;
 
-use bingher\ueditor\config\Config;
+use bingher\ueditor\config\UeConfig;
 use think\facade\Request;
 use think\Image;
 use think\facade\Filesystem;
@@ -12,18 +12,16 @@ class Ueditor
     protected $uid;
     protected $error;
     protected $upfile;
+    protected $fs;
 
     function __construct()
     {
-        $this->config = Config();
+        $this->config = new UeConfig();
         $uidKey = $this->config->get('session_uid_key','uid');
         $this->uid = session($uidKey) ? strval(session($uidKey)) : '';
-        $this->upfile = $this->config->get('upload_field_name','upfile');
-
-        $fsConfig  = Filesystem::getDiskConfig(Filesystem::getDefaultDriver());
-        $this->rootPath = $fsConfig['root'];
-        $this->savePath = self::pathJoin('ueditor',$this->uid);
-        $this->urlPath  = $fsConfig['url'];
+        $this->upField = $this->config->get('upload_field_name','upfile');
+        $this->fs = Filesystem::disk();        
+        $this->savePath = self::pathJoin('ueditor',$this->uid);        
     }
 
     public function index()
@@ -106,7 +104,7 @@ class Ueditor
                 /* 抓取远程图片 */
                 $list     = [];
                 $failList = []; //错误的列表
-                $source = Request::param($this->config->get('upload_field_name','upfile'));
+                $source = Request::param($this->upField);
                 if (empty($source)) {
                     return $this->error('参数错误');
                 }
@@ -167,18 +165,20 @@ class Ueditor
      */
     private function upFile($config)
     {        
-        $file = request()->file($this->config->get('upload_field_name','upfile'));
+        $file = request()->file($this->upField);
         $check = $this->check($config,$file);
         if ($check !== true) {
             return $check;
         }
 
-        $saveName = Filesystem::putFile($this->savePath, $file);
+        $saveName = $this->fs->putFile($this->savePath, $file);
+        dump($saveName);
         if (!$saveName) {
             $this->error = '文件上传失败';
             return false;
         }
-
+        $filePath = $this->fs->path($saveName);
+        halt($filePath);
         $filePath    = self::pathJoin($this->rootPath, $saveName);
         $ext      = $file->getExtension();
         if($this->isImage($ext)){
