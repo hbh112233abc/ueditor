@@ -5,6 +5,7 @@
     "minimum-stability": "dev",
     "require": {
         "topthink/framework": "^6.0.0",
+        "topthink/think-view": "^1.0",
         "topthink/think-image": "^1.0"
     },
     "license": "MIT",
@@ -27,9 +28,9 @@
         }
     },
     "scripts":{
-        "post-package-install":"bingher\\ueditor\\Recource::install",
-        "post-package-update":"bingher\\ueditor\\Recource::install",
-        "post-package-uninstall":"bingher\\ueditor\\Recource::uninstall"
+        "post-package-install":"bingher\\ueditor\\util\\Recource::install",
+        "post-package-update":"bingher\\ueditor\\util\\Recource::install",
+        "post-package-uninstall":"bingher\\ueditor\\util\\Recource::uninstall"
     },
     "authors": [
         {
