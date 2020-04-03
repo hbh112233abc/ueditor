@@ -11,7 +11,7 @@ composer require bingher/ueditor
 ```
 'max_image_size' => 1048576, /* 上传大小限制，单位B  102400=100KB, 512000=500KB,1048576=1M */
 'max_vedio_size' => 102400000, /* 上传大小限制，单位B，默认100MB */
-'max_file_size' => 51200000, /* 上传大小限制，单位B，默认50MB */   
+'max_file_size' => 51200000, /* 上传大小限制，单位B，默认50MB */
 'thumb_type' => 1,/* 0 不做缩略图,缩略图模式：1、标识缩略图等比例缩放类型，2、标识缩略图缩放后填充类型 参考\think\Image::THUMB_*常量*/
 'thumb_image_quality' => 80, /*缩略图图片清晰度设置，默认是80 */
 'thumb_max_width_height' => 680, /**获取图片宽高的最大限制值，0为不限制 */
@@ -31,11 +31,10 @@ composer require bingher/ueditor
 ```
 ue_view方法如下:
 ```
-function ue_view(string $id = 'ueditor',string $content = '',array $config = []){...}
+function ue_view(string $name = 'ueditor',string $content = '',array $config = []){...}
 ```
 |参数|说明|
 |-|-|
-|$id|生成的插件id,默认ueditor,同一个页面需要多个ueditor|
+|$name|生成的插件id及表单提交字段name,默认ueditor,同一个页面需要多个ueditor,需要分别设定|
 |$content|初始化内容,在需要编辑的时候传入编辑文本内容|
 |$config|配置项,参考ueditor.config.js|
-
