@@ -4,7 +4,6 @@ namespace bingher\ueditor\controller;
 use bingher\ueditor\config\UeConfig;
 use think\facade\Request;
 use think\Image;
-use think\facade\Filesystem;
 
 class Ueditor
 {
@@ -14,97 +13,100 @@ class Ueditor
     protected $upfile;
     protected $fs;
 
-    function __construct()
+    public function __construct()
     {
-        $this->config = new UeConfig();
-        $uidKey = $this->config->get('session_uid_key','uid');
-        $this->uid = session($uidKey) ? strval(session($uidKey)) : '';
-        $this->upField = $this->config->get('upload_field_name','upfile');
-        $this->fs = Filesystem::disk();        
-        $this->savePath = self::pathJoin('ueditor',$this->uid);        
+        $this->config   = new UeConfig();
+        $uidKey         = $this->config->get('session_uid_key', 'uid');
+        $this->uid      = session($uidKey) ? strval(session($uidKey)) : '';
+        $this->upField  = $this->config->get('upload_field_name', 'upfile');
+        $this->fs       = $this->config->initFilesystem();
+        $this->rootPath = $this->config->get('filesystem.root');
+        $this->urlPath = $this->config->get('filesystem.url');
+        $this->savePath = path_join('ueditor', $this->uid);
     }
 
+    /**
+     * 针对ueditor的请求链接
+     * 因为注册了路由,请求路径为 http://domain/ueditor/index
+     *
+     * @return \think\Response
+     */
     public function index()
     {
-        $action = Request::param('action','');
+        $action = Request::param('action', '');
         switch ($action) {
             case 'config':
                 return $this->config->json();
                 break;
-            
+
             /* 上传图片 */
-            case 'uploadimage':
-                $config = array(
-                    "pathFormat" => $this->config->get('imagePathFormat'),
+            case 'upload_image':
+                $config = [
                     "maxSize"    => $this->config->get('imageMaxSize'),
                     "allowFiles" => $this->config->get('imageAllowFiles'),
-                );
-                $result    = $this->upFile($config);
+                ];
+                $result = $this->upFile($config);
                 break;
 
             /* 上传涂鸦 */
-            case 'uploadscrawl':
-                $config = array(
-                    "pathFormat" => $this->config->get('scrawlPathFormat'),
+            case 'upload_scrawl':
+                $config = [
                     "maxSize"    => $this->config->get('scrawlMaxSize'),
                     "allowFiles" => $this->config->get('scrawlAllowFiles'),
                     "oriName"    => "scrawl.png",
-                );
-                $base64    = "base64";
-                $result    = $this->upBase64($config);
+                ];
+                $result = $this->upBase64($config);
                 break;
 
             /* 上传视频 */
-            case 'uploadvideo':
-                $config = array(
-                    "pathFormat" => $this->config->get('videoPathFormat'),
+            case 'upload_video':
+                $config = [
                     "maxSize"    => $this->config->get('videoMaxSize'),
                     "allowFiles" => $this->config->get('videoAllowFiles'),
-                );
-                $result    = $this->upFile($config);
+                ];
+                $result = $this->upFile($config);
                 break;
 
             /* 上传文件 */
-            case 'uploadfile':
+            case 'upload_file':
                 // default:
-                $config = array(
-                    "pathFormat" => $this->config->get('filePathFormat'),
+                $config = [
                     "maxSize"    => $this->config->get('fileMaxSize'),
                     "allowFiles" => $this->config->get('fileAllowFiles'),
-                );
-                $result    = $this->upFile($config);
+                ];
+                $result = $this->upFile($config);
                 break;
 
             /* 列出图片 */
-            case 'listimage':
+            case 'list_image':
                 $allowFiles = $this->config->get('imageManagerAllowFiles');
                 $listSize   = $this->config->get('imageManagerListSize');
                 $path       = $this->config->get('imageManagerListPath');
-                $get        = $_GET;
+                $get        = Request::param();
                 $result     = $this->fileList($allowFiles, $listSize, $get);
                 break;
             /* 列出文件 */
-            case 'listfile':
+            case 'list_file':
                 $allowFiles = $this->config->get('fileManagerAllowFiles');
                 $listSize   = $this->config->get('fileManagerListSize');
                 $path       = $this->config->get('fileManagerListPath');
-                $get        = $_GET;
+                $get        = Request::param();
                 $result     = $this->fileList($allowFiles, $listSize, $get);
                 break;
 
             /* 抓取远程文件 */
-            case 'catchimage':
-                $config = array(
+            case 'catch_image':
+                $config = [
                     "pathFormat" => $this->config->get('catcherPathFormat'),
                     "maxSize"    => $this->config->get('catcherMaxSize'),
                     "allowFiles" => $this->config->get('catcherAllowFiles'),
                     "oriName"    => "remote.png",
-                );
+                ];
 
                 /* 抓取远程图片 */
                 $list     = [];
                 $failList = []; //错误的列表
-                $source = Request::param($this->upField);
+                $source   = Request::param($this->upField);
                 if (empty($source)) {
                     return $this->error('参数错误');
                 }
@@ -112,27 +114,27 @@ class Ueditor
                 foreach ($source as $imgUrl) {
                     $remoteResult = $this->saveRemote($config, $imgUrl);
                     if ($remoteResult === false) {
-                        array_push($failList, array(
+                        array_push($failList, [
                             "state"  => $this->error,
                             "source" => htmlspecialchars($imgUrl),
-                        ));
+                        ]);
                     } else {
-                        array_push($list, array(
+                        array_push($list, [
                             "state"    => $remoteResult["state"],
                             "url"      => $remoteResult["url"],
                             "size"     => $remoteResult["size"],
                             "title"    => htmlspecialchars($remoteResult["title"]),
                             "original" => htmlspecialchars($remoteResult["original"]),
                             "source"   => htmlspecialchars($imgUrl),
-                        ));
-                    }                   
+                        ]);
+                    }
                 }
 
                 $result = json_encode([
                     'state'     => count($list) ? 'SUCCESS' : 'ERROR',
                     'list'      => $list,
                     'fail_list' => $failList,
-                ]);                
+                ]);
                 break;
 
             default:
@@ -141,7 +143,7 @@ class Ueditor
         }
 
         /**错误信息 */
-        if($result === false){
+        if ($result === false) {
             return $this->error($this->error);
         }
 
@@ -150,54 +152,50 @@ class Ueditor
             return $this->success($result);
         }
 
-        if (!preg_match('/^[\w_]+$/',$callback)) {
+        if (!preg_match('/^[\w_]+$/', $callback)) {
             return $this->error('callback参数不合法');
         }
 
-        return htmlspecialchars($callback . '(' . $result . ')');
+        return htmlspecialchars($callback . '(' . json_encode($result) . ')');
     }
-
-    
 
     /**
      * 上传文件的主处理方法
      * @return mixed
      */
     private function upFile($config)
-    {        
-        $file = request()->file($this->upField);
-        $check = $this->check($config,$file);
+    {
+        $file  = request()->file($this->upField);
+        dump($_FILES[$this->upField]['name']);die;
+        $check = $this->check($config, $file);
         if ($check !== true) {
             return $check;
         }
 
         $saveName = $this->fs->putFile($this->savePath, $file);
-        dump($saveName);
         if (!$saveName) {
             $this->error = '文件上传失败';
             return false;
         }
         $filePath = $this->fs->path($saveName);
-        halt($filePath);
-        $filePath    = self::pathJoin($this->rootPath, $saveName);
-        $ext      = $file->getExtension();
-        if($this->isImage($ext)){
+        $ext = $file->getExtension();
+        if ($this->isImage($ext)) {
             try {
-                $this->imageHandle($filePath,$ext);                
+                $this->imageHandle($filePath, $ext);
             } catch (\Exception $e) {
                 $this->error = $e->getMessage();
                 return false;
             }
-        }        
-
+        }
+        $saveFile = new \SplFileInfo($filePath);
         $data = [
-            'url'      => self::pathJoin($this->urlPath, $saveName),
-            'title'    => $file->getFileName(),
-            'original' => $file->getFileName(),
+            'url'      => path_join($this->urlPath, $saveName),
+            'title'    => $_FILES[$this->upField]['name'],
+            'original' => $saveFile->getFileName(),
             'type'     => '.' . $ext,
-            'size'     => $file->getSize(),
+            'size'     => $saveFile->getSize(),
         ];
-        
+
         return $data;
     }
 
@@ -208,21 +206,21 @@ class Ueditor
      * @param string $ext
      * @return void
      */
-    protected function imageHandle($filePath,$ext)
+    protected function imageHandle($filePath, $ext)
     {
-        $thumbType = $this->config->get('thumb_type',0);
-        $quality  = $this->config->get('image_upload_quality', 80); //获取图片清晰度设置，默认是80
-        $maxLimit = $this->config->get('image_upload_max_limit', 680); //获取图片宽高的最大限制值，0为不限制
+        $thumbType = $this->config->get('thumb_type', 0);
+        $quality   = $this->config->get('image_upload_quality', 80); //获取图片清晰度设置，默认是80
+        $maxLimit  = $this->config->get('image_upload_max_limit', 680); //获取图片宽高的最大限制值，0为不限制
 
         $image = Image::open($filePath);
         if ($maxLimit > 0 && $thumbType > 0) {
             $image->thumb($maxLimit, $maxLimit, $thumbType); //设置缩略图模式，按宽最大680或高最大680压缩
         }
         if ($this->water == 1) {
-            $font = $this->config->get('water_font_path',__DIR__.'/../assets/zhttfs/1.ttf');
+            $font = $this->config->get('water_font_path', __DIR__ . '/../assets/zhttfs/1.ttf');
             $image->text($this->config->get('water_text'), $font, 10, '#FFCC66', $this->config->get('water_position'), [-8, -8])->save($filePath, $ext, $quality);
         } else if ($this->water == 2) {
-            $image->water($this->config->get('water_image'),$this->config->get('water_position'),80)->save($filePath, $ext, $quality);
+            $image->water($this->config->get('water_image'), $this->config->get('water_position'), 80)->save($filePath, $ext, $quality);
         } else {
             $image->save($filePath, $ext, $quality);
         }
@@ -237,8 +235,8 @@ class Ueditor
      */
     protected function isImage($ext)
     {
-        $imageExts = self::formatExts($this->config->get('imageAllowFiles',[]));
-        return in_array($ext,$imageExts);
+        $imageExts = self::formatExts($this->config->get('imageAllowFiles', []));
+        return in_array($ext, $imageExts);
     }
 
     /**
@@ -253,15 +251,15 @@ class Ueditor
             return false;
         }
 
-        $img        = base64_decode($base64Data);
+        $img = base64_decode($base64Data);
 
         $savePath         = $this->savePath;
-        $dirname          = self::pathJoin($this->rootPath, $savePath);
+        $dirname          = path_join($this->rootPath, $savePath);
         $file['filesize'] = strlen($img);
         $file['oriName']  = $config['oriName'];
         $file['ext']      = strtolower(strrchr($config['oriName'], '.'));
         $file['name']     = uniqid() . $file['ext'];
-        $file['fullName'] = self::pathJoin($dirname, $file['name']);
+        $file['fullName'] = path_join($dirname, $file['name']);
         $fullName         = $file['fullName'];
 
         //检查文件大小是否超出限制
@@ -273,28 +271,28 @@ class Ueditor
         //创建目录失败
         if (!file_exists($dirname) && !mkdir($dirname, 0777, true)) {
             $this->error = '目录创建失败';
-            return false;            
+            return false;
         } else if (!is_writeable($dirname)) {
             $this->error = '目录没有写权限';
-            return false;            
+            return false;
         }
 
         //移动文件
         if (!(file_put_contents($fullName, $img) && file_exists($fullName))) {
-            //移动失败            
+            //移动失败
             $this->error = '写入文件内容错误';
-            return false;  
+            return false;
         }
-        
+
         //移动成功
         $data = [
-            'url'      => self::pathJoin($this->urlPath, $savePath, $file['name']),
+            'url'      => path_join($this->urlPath, $savePath, $file['name']),
             'title'    => $file['name'],
             'original' => $file['oriName'],
             'type'     => $file['ext'],
             'size'     => $file['filesize'],
         ];
-        
+
         return $data;
     }
 
@@ -308,20 +306,20 @@ class Ueditor
         $imgUrl = str_replace("&amp;", "&", $imgUrl);
 
         //http开头验证
-        if (strpos($imgUrl, "http") !== 0) {            
+        if (strpos($imgUrl, "http") !== 0) {
             $this->error = '链接不是http|https链接';
             return false;
         }
         //获取请求头并检测死链
         $heads = get_headers($imgUrl, true);
-        if (!(stristr($heads[0], "200") && stristr($heads[0], "OK"))) {            
+        if (!(stristr($heads[0], "200") && stristr($heads[0], "OK"))) {
             $this->error = '链接不可用';
             return false;
         }
         //格式验证(扩展名验证和Content-Type验证)
         $fileType = strtolower(strrchr(strrchr($imgUrl, '/'), '.'));
         //img链接后缀可能为空,Content-Type须为image
-        if ((!empty($fileType) && !in_array($fileType, $config['allowFiles'])) || stristr($heads['Content-Type'], "image") === -1) {            
+        if ((!empty($fileType) && !in_array($fileType, $config['allowFiles'])) || stristr($heads['Content-Type'], "image") === -1) {
             $this->error = '链接contentType不正确';
             return false;
         }
@@ -351,15 +349,15 @@ class Ueditor
         $img = ob_get_contents();
         ob_end_clean();
 
-        if ($res === false) {            
+        if ($res === false) {
             $this->error = $message;
             return false;
         }
 
         preg_match("/[\/]([^\/]*)[\.]?[^\.\/]*$/", $imgUrl, $fileName);
 
-        $savePath         = self::pathJoin($this->savePath, date('Ymd'));
-        $dirname          = self::pathJoin($this->rootPath, $savePath);
+        $savePath         = path_join($this->savePath, date('Ymd'));
+        $dirname          = path_join($this->rootPath, $savePath);
         $file['oriName']  = $fileName ? $fileName[1] : "";
         $file['filesize'] = strlen($img);
         $file['ext']      = strtolower(strrchr($config['oriName'], '.'));
@@ -374,10 +372,10 @@ class Ueditor
         }
 
         //创建目录失败
-        if (!file_exists($dirname) && !mkdir($dirname, 0777, true)) {            
+        if (!file_exists($dirname) && !mkdir($dirname, 0777, true)) {
             $this->error = '目录创建失败';
             return false;
-        } else if (!is_writeable($dirname)) {            
+        } else if (!is_writeable($dirname)) {
             $this->error = '目录没有写权限';
             return false;
         }
@@ -388,20 +386,19 @@ class Ueditor
             $this->error = '写入文件内容错误';
             return false;
         }
-        
+
         //移动成功
         $data = array(
             'state'    => 'SUCCESS',
-            'url'      => self::pathJoin($this->urlPath,$savePath, $file['name']),
+            'url'      => path_join($this->urlPath, $savePath, $file['name']),
             'title'    => $file['name'],
             'original' => $file['oriName'],
             'type'     => $file['ext'],
             'size'     => $file['filesize'],
         );
-        
+
         return $data;
     }
-
 
     /**
      * 文件列表
@@ -413,9 +410,9 @@ class Ueditor
      */
     private function fileList($allowFiles, $listSize, $get)
     {
-        $dirname = self::pathJoin($this->rootPath,'ueditor');
-        if ($this->uid != $this->config->get('super_admin_uid','admin')) {
-            $dirname = self::pathJoin($dirname,$this->uid);
+        $dirname = path_join($this->rootPath, 'ueditor');
+        if ($this->uid != $this->config->get('super_admin_uid', 'admin')) {
+            $dirname = path_join($dirname, $this->uid);
         }
 
         $allowFiles = substr(str_replace(".", "|", join("", $allowFiles)), 1);
@@ -441,7 +438,7 @@ class Ueditor
         for ($i = min($end, $len) - 1, $list = array(); $i < $len && $i >= 0 && $i >= $start; $i--) {
             $list[] = $files[$i];
         }
-        
+
         /* 返回数据 */
         $result = [
             "state" => "SUCCESS",
@@ -494,7 +491,7 @@ class Ueditor
      * @param  array $files [文件数组]
      * @return array   [格式化后的文件数组]
      */
-    static public function formatUrl($files)
+    public static function formatUrl($files)
     {
         if (!is_array($files)) {
             return $files;
@@ -522,7 +519,7 @@ class Ueditor
      * @param array $exts 文件后缀数组
      * @return array
      */
-    static public function formatExts(array $exts):array
+    public static function formatExts(array $exts): array
     {
         $data = [];
         foreach ($exts as $key => $value) {
@@ -535,14 +532,15 @@ class Ueditor
      * 路径拼接
      * 1.传入的多个参数用DIRECTORY_SEPARATOR连接
      * 2.将\\替换为/
-     * 
+     *
      * @param array ...$args
      * @return string
      */
-    static public function pathJoin(...$args):string
+    public static function pathJoin(...$args): string
     {
-        $path = implode(DIRECTORY_SEPARATOR,$args);
-        $path = str_replace('\\','/',$path);
+        $path = implode(DIRECTORY_SEPARATOR, $args);
+        $path = str_replace('//', '/', $path);
+        $path = str_replace('\\', '/', $path);
         return $path;
     }
 
@@ -553,9 +551,9 @@ class Ueditor
      * @param integer $code
      * @return \think\Response
      */
-    protected function error($msg = 'ERROR',$code=0)
+    protected function error($msg = 'ERROR', $code = 0)
     {
-        return json(['state'=>$msg,'code'=>$code]);
+        return json(['state' => $msg, 'code' => $code]);
     }
 
     /**
@@ -566,12 +564,12 @@ class Ueditor
      * @param integer $code
      * @return \think\Response
      */
-    protected function success(array $data = [],$msg = 'SUCCESS',$code=1)
+    protected function success(array $data = [], $msg = 'SUCCESS', $code = 1)
     {
         if (empty($data['state'])) {
             $data['state'] = $msg;
         }
-        if(empty($data['code'])){
+        if (empty($data['code'])) {
             $data['code'] = $code;
         }
         return json($data);
@@ -586,20 +584,20 @@ class Ueditor
      * @param Object $file
      * @return bool
      */
-    protected function check($config,$file)
+    protected function check($config, $file)
     {
         try {
             $rule = [
-                $this->config->get('upload_field_name') => [
+                $this->upField => [
                     'fileSize' => $config['maxSize'],
-                    'fileExt' => self::formatExts($config['allowFiles']),
-                ]
+                    'fileExt'  => self::formatExts($config['allowFiles']),
+                ],
             ];
-            validate($rule)->check($file);
-            return True;
+            validate($rule)->check([$this->upField => $file]);
+            return true;
         } catch (\think\exception\ValidateException $e) {
             $this->error = $e->getMessage();
-            return False;
+            return false;
         }
     }
 }
