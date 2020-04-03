@@ -43,6 +43,17 @@ tpl;
 function path_join(...$args): string
 {
     $path = implode(DIRECTORY_SEPARATOR, $args);
+    $path = path_fmt($path);
+    return $path;
+}
+
+/**
+ * 路径格式
+ *
+ * @param string $path
+ * @return string
+ */
+function path_fmt($path){
     $path = str_replace('//', '/', $path);
     $path = str_replace('\\', '/', $path);
     return $path;

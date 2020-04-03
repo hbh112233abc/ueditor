@@ -6,7 +6,9 @@
     "require": {
         "topthink/framework": "^6.0.0",
         "topthink/think-view": "^1.0",
-        "topthink/think-image": "^1.0"
+        "topthink/think-image": "^1.0",
+        "topthink/think-migration": "^3.0",
+        "xaboy/form-builder": "~2.0"
     },
     "license": "MIT",
     "autoload": {
@@ -24,7 +26,7 @@
             ],
             "config":{
                 "ueditor": "src/config.php"
-            }            
+            }
         }
     },
     "scripts":{
