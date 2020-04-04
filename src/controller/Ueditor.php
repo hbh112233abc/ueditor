@@ -1,4 +1,5 @@
 <?php
+
 namespace bingher\ueditor\controller;
 
 use bingher\ueditor\config\UeConfig;
@@ -20,8 +21,8 @@ class Ueditor
         $this->uid      = session($uidKey) ? strval(session($uidKey)) : '';
         $this->upField  = $this->config->get('upload_field_name', 'upfile');
         $this->fs       = $this->config->initFilesystem();
-        $this->rootPath = $this->config->get('filesystem.root');
-        $this->urlPath = $this->config->get('filesystem.url');
+        $this->rootPath = $this->config->get('filesystem_root');
+        $this->urlPath = $this->config->get('filesystem_url');
         $this->savePath = path_join('ueditor', $this->uid);
     }
 
@@ -39,7 +40,7 @@ class Ueditor
                 return $this->config->json();
                 break;
 
-            /* 上传图片 */
+                /* 上传图片 */
             case 'upload_image':
                 $config = [
                     "maxSize"    => $this->config->get('imageMaxSize'),
@@ -48,7 +49,7 @@ class Ueditor
                 $result = $this->upFile($config);
                 break;
 
-            /* 上传涂鸦 */
+                /* 上传涂鸦 */
             case 'upload_scrawl':
                 $config = [
                     "maxSize"    => $this->config->get('scrawlMaxSize'),
@@ -58,7 +59,7 @@ class Ueditor
                 $result = $this->upBase64($config);
                 break;
 
-            /* 上传视频 */
+                /* 上传视频 */
             case 'upload_video':
                 $config = [
                     "maxSize"    => $this->config->get('videoMaxSize'),
@@ -67,7 +68,7 @@ class Ueditor
                 $result = $this->upFile($config);
                 break;
 
-            /* 上传文件 */
+                /* 上传文件 */
             case 'upload_file':
                 // default:
                 $config = [
@@ -77,7 +78,7 @@ class Ueditor
                 $result = $this->upFile($config);
                 break;
 
-            /* 列出图片 */
+                /* 列出图片 */
             case 'list_image':
                 $allowFiles = $this->config->get('imageManagerAllowFiles');
                 $listSize   = $this->config->get('imageManagerListSize');
@@ -85,7 +86,7 @@ class Ueditor
                 $get        = Request::param();
                 $result     = $this->fileList($allowFiles, $listSize, $get);
                 break;
-            /* 列出文件 */
+                /* 列出文件 */
             case 'list_file':
                 $allowFiles = $this->config->get('fileManagerAllowFiles');
                 $listSize   = $this->config->get('fileManagerListSize');
@@ -94,7 +95,7 @@ class Ueditor
                 $result     = $this->fileList($allowFiles, $listSize, $get);
                 break;
 
-            /* 抓取远程文件 */
+                /* 抓取远程文件 */
             case 'catch_image':
                 $config = [
                     "pathFormat" => $this->config->get('catcherPathFormat'),
@@ -166,7 +167,6 @@ class Ueditor
     private function upFile($config)
     {
         $file  = request()->file($this->upField);
-        dump($_FILES[$this->upField]['name']);die;
         $check = $this->check($config, $file);
         if ($check !== true) {
             return $check;

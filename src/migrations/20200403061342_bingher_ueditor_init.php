@@ -36,6 +36,7 @@ class BingherUeditorInit extends Migrator
             ->addColumn('value', 'text', array('comment' => '配置项内容'))
             ->addColumn('group', 'string', array('limit' => 16, 'default' => 'config', 'comment' => '配置分组'))
             ->addColumn('remark', 'string', array('limit' => 225, 'default' => '', 'comment' => '配置项备注'))
+            ->addIndex('name')
             ->create();
 
         /**基础配置项 */
@@ -50,9 +51,12 @@ class BingherUeditorInit extends Migrator
             ['name' => 'water_text', 'value' => '', 'group' => 'base', 'remark' => '水印文字'],
             ['name' => 'water_position', 'value' => 9, 'group' => 'base', 'remark' => '水印位置,默认右下角 参考\think\Image::WATER_*常量 '],
             ['name' => 'water_image', 'value' => '', 'group' => 'base', 'remark' => '水印图片路径'],
+            ['name' => 'upload_field_name', 'value' => 'upfile', 'group' => 'base', 'remark' => '上传表单字段'],
             ['name' => 'session_uid_key', 'value' => 'uid', 'group' => 'base', 'remark' => 'session用户uid'],
             ['name' => 'super_admin_uid', 'value' => 'admin', 'group' => 'base', 'remark' => '超级管理员uid '],
-            ['name' => 'filesystem','value'=>'{"type":"local","root":".\/upload","url":"\/upload"}','group'=>'base','remark'=>'上传文件系统配置'],
+            ['name' => 'filesystem_type', 'value' => 'local', 'group' => 'base', 'remark' => '上传文件系统类型'],
+            ['name' => 'filesystem_root', 'value' => './upload', 'group' => 'base', 'remark' => '上传文件系统存储路径'],
+            ['name' => 'filesystem_url', 'value' => '/upload', 'group' => 'base', 'remark' => '上传文件系统访问路径'],
         ];
 
         $this->table($this->tableName)->insert($rows)->save();

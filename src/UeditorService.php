@@ -15,6 +15,8 @@ class UeditorService extends Service
         $route->rule('ueditor/setting/index', "\\bingher\\ueditor\\controller\\Setting@index");
         $route->rule('ueditor/setting/save', "\\bingher\\ueditor\\controller\\Setting@save");
         $route->rule('ueditor/setting/upload_imgage', "\\bingher\\ueditor\\controller\\Setting@uploadImage");
+        $route->rule('ueditor/demo/view', "\\bingher\\ueditor\\controller\\Demo@view");
+        $route->rule('ueditor/demo/setting', "\\bingher\\ueditor\\controller\\Demo@setting");
 
         $this->commands(['ueditor:publish' => Publish::class]);
     }

@@ -8,16 +8,17 @@
  * @param array $config 配置项, 参考assets/ueditor/ueditor.config.js
  * @return string
  */
-function ue_view(string $name='ueditor',string $content='',array $config=[]){
+function ue_view(string $name = 'ueditor', string $content = '', array $config = [])
+{
     $default = [
         "serverUrl" => '/ueditor/index',
-        "UEDITOR_HOME_URL"=>'/static/bingher/ueditor/',
-        "initialFrameHeight"=>600,
-        "autoHeightEnabled"=>true,
-        "maximumWords"=>200000,
-        "initialContent"=> $content,
+        "UEDITOR_HOME_URL" => '/static/bingher/ueditor/',
+        "initialFrameHeight" => 600,
+        "autoHeightEnabled" => true,
+        "maximumWords" => 200000,
+        "initialContent" => $content,
     ];
-    $config = array_merge($default,$config);
+    $config = array_merge($default, $config);
     $configJson = json_encode($config);
     $result = <<<tpl
 <script id="{$name}" name="{$name}" type="text/plain"></script>
@@ -30,6 +31,16 @@ function ue_view(string $name='ueditor',string $content='',array $config=[]){
 </script>
 tpl;
     return $result;
+}
+
+/**
+ * ueditor 设置
+ *
+ * @return string
+ */
+function ue_setting(): string
+{
+    return (new \bingher\ueditor\controller\Setting)->index();
 }
 
 /**
@@ -53,7 +64,8 @@ function path_join(...$args): string
  * @param string $path
  * @return string
  */
-function path_fmt($path){
+function path_fmt($path)
+{
     $path = str_replace('//', '/', $path);
     $path = str_replace('\\', '/', $path);
     return $path;

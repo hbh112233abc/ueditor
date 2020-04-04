@@ -1,7 +1,11 @@
 <?php
+
 namespace bingher\ueditor\config;
+
 use think\facade\Config;
 use think\facade\Filesystem;
+use think\facade\Db;
+
 /**
  * 配置信息
  */
@@ -11,18 +15,23 @@ class UeConfig
     protected $ueditor;
     function __construct($config = [])
     {
-        $userConfig = Config::get('ueditor',[]);
-        if(!empty($config)){
-            $userConfig = array_merge($userConfig,$config);
+        try {
+            $userConfig = Db::table('ueditor_config')->cache('ueditor_config')->column('value', 'name');
+        } catch (\Throwable $th) {
+            $userConfig = Config::get('ueditor', []);
+        }
+
+        if (!empty($config)) {
+            $userConfig = array_merge($userConfig, $config);
         }
         $this->config = $userConfig;
-        $this->config = array_merge($this->config,$userConfig);
+        $this->config = array_merge($this->config, $userConfig);
 
-        $this->ueditor = require __DIR__.'/ueditor.php';
+        $this->ueditor = require __DIR__ . '/ueditor.php';
         $this->ueditor['imageMaxSize'] = $this->ueditor['scrawlMaxSize'] = $this->ueditor['catcherMaxSize'] = $this->config['max_image_size'];
         $this->ueditor['imageFieldName'] = $this->ueditor['scrawlFieldName'] = $this->ueditor['catcherFieldName'] = $this->ueditor['videoFieldName'] = $this->ueditor['fileFieldName'] = $this->config['upload_field_name'];
 
-        $this->config = array_merge($this->ueditor,$this->config);
+        $this->config = array_merge($this->ueditor, $this->config);
     }
 
     /**
@@ -35,25 +44,22 @@ class UeConfig
         return json($this->ueditor);
     }
 
-    public function initFilesystem(string $diskName='ueditor')
+    public function initFilesystem(string $diskName = 'ueditor')
     {
         $fsConfig = Config::get('filesystem');
-        if(empty($fsConfig['disks'][$diskName])){
-            $ueditorFsConfig = $this->get('filesystem',[
+        if (empty($fsConfig['disks'][$diskName])) {
+            $ueditorFsConfig = [
                 // 磁盘类型
-                'type'       => 'local',
+                'type'       => $this->get('filesystem_type', 'local'),
                 // 磁盘路径
-                'root'       => app()->getRootPath() . 'public/upload',
+                'root'       => $this->get('filesystem_root', app()->getRootPath() . 'public/upload'),
                 // 磁盘路径对应的外部URL路径
-                'url'        => '/upload',
+                'url'        => $this->get('filesystem_url', '/upload'),
                 // 可见性
                 'visibility' => 'public',
-            ]);
-            if (empty($ueditorFsConfig)) {
-                throw new \Exception('配置错误,config/ueditor.php未找到filesystem配置项');
-            }
+            ];
             $fsConfig['disks'][$diskName] = $ueditorFsConfig;
-            Config::set($fsConfig,'filesystem');
+            Config::set($fsConfig, 'filesystem');
         }
         return Filesystem::disk($diskName);
     }
@@ -65,7 +71,7 @@ class UeConfig
      * @param string $default
      * @return string|int|array
      */
-    public function get(string $name,$default='')
+    public function get(string $name, $default = '')
     {
         // 无参数时获取所有
         if (empty($name)) {
