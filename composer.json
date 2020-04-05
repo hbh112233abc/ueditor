@@ -29,11 +29,6 @@
             }
         }
     },
-    "scripts":{
-        "post-package-install":"bingher\\ueditor\\util\\Recource::install",
-        "post-package-update":"bingher\\ueditor\\util\\Recource::install",
-        "post-package-uninstall":"bingher\\ueditor\\util\\Recource::uninstall"
-    },
     "authors": [
         {
             "name": "hbh112233abc",
