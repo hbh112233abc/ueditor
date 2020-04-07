@@ -1,7 +1,7 @@
 <?php
 
-use think\migration\Migrator;
 use think\migration\db\Column;
+use think\migration\Migrator;
 
 class BingherUeditorInit extends Migrator
 {
@@ -31,12 +31,11 @@ class BingherUeditorInit extends Migrator
     public function up()
     {
         // create the table
-        $table = $this->table($this->tableName, array('engine' => 'InnoDB'));
-        $table->addColumn('name', 'string', array('limit' => 32, 'default' => '', 'comment' => '配置项名称'))
-            ->addColumn('value', 'text', array('comment' => '配置项内容'))
-            ->addColumn('group', 'string', array('limit' => 16, 'default' => 'config', 'comment' => '配置分组'))
-            ->addColumn('remark', 'string', array('limit' => 225, 'default' => '', 'comment' => '配置项备注'))
-            ->addIndex('name')
+        $table = $this->table($this->tableName, ['engine' => 'InnoDB', 'id' => false, 'primary_key' => 'name']);
+        $table->addColumn('name', 'string', ['limit' => 32, 'default' => '', 'comment' => '配置项名称'])
+            ->addColumn('value', 'text', ['comment' => '配置项内容'])
+            ->addColumn('group', 'string', ['limit' => 16, 'default' => 'config', 'comment' => '配置分组'])
+            ->addColumn('remark', 'string', ['limit' => 225, 'default' => '', 'comment' => '配置项备注'])
             ->create();
 
         /**基础配置项 */
@@ -44,7 +43,7 @@ class BingherUeditorInit extends Migrator
             ['name' => 'max_image_size', 'value' => 1048576, 'group' => 'base', 'remark' => '图片上传大小限制，单位B  102400=100KB, 512000=500KB,1048576=1M '],
             ['name' => 'max_vedio_size', 'value' => 102400000, 'group' => 'base', 'remark' => '视频上传大小限制，单位B，默认100MB '],
             ['name' => 'max_file_size', 'value' => 51200000, 'group' => 'base', 'remark' => '文件上传大小限制，单位B，默认50MB '],
-            ['name' => 'thumb_type', 'value' => 1, 'group' => 'base', 'remark' => '缩略图模式：0:不做缩略图;1:标识缩略图等例缩放类型;2:标识缩略图缩放后填充类型 参考\\think\\Image::THUMB_*常量'],
+            ['name' => 'thumb_type', 'value' => 1, 'group' => 'base', 'remark' => '缩略图模式：0:不做缩略图;其他参考\\think\\Image::THUMB_*常量'],
             ['name' => 'thumb_image_quality', 'value' => 80, 'group' => 'base', 'remark' => '缩略图图片清晰度设置，默认是80 '],
             ['name' => 'thumb_max_width_height', 'value' => 680, 'group' => 'base', 'remark' => '缩略图宽高的最大限制值，0为不限制 '],
             ['name' => 'water', 'value' => 0, 'group' => 'base', 'remark' => '是否加水印(0:无水印,1:水印文字,2:水印图片)'],
