@@ -26,7 +26,7 @@ class Setting
             Elm::number('max_image_size', '上传图片限制', $config['max_image_size']['value'])->min(10240)->max(512000000)->step(10240)->info($config['max_image_size']['remark']),
             Elm::number('max_file_size', '上传文件限制', $config['max_file_size']['value'])->min(10240)->max(512000000)->step(10240)->info($config['max_file_size']['remark']),
             Elm::number('max_vedio_size', '上传视频限制', $config['max_vedio_size']['value'])->min(10240)->max(5120000000)->step(10240)->info($config['max_vedio_size']['remark']),
-            Elm::select('thumb_type', '缩略图类型')->options([
+            Elm::select('thumb_type', '缩略图类型', intval($config['thumb_type']['value']))->options([
                 ['value' => 0, 'label' => '不生成缩略图'],
                 ['value' => Image::THUMB_SCALING,   'label' => '缩略图等比例缩放'],
                 ['value' => Image::THUMB_FILLED,    'label' => '缩略图缩放后填充'],
@@ -41,7 +41,7 @@ class Setting
                 ['value' => 0, 'label' => '无水印'],
                 ['value' => 1, 'label' => '文字水印'],
                 ['value' => 2, 'label' => '图片水印'],
-            ])->info($config['water']['remark'])->value($config['water']['value']),
+            ])->info($config['water']['remark'])->value(intval($config['water']['value'])),
             Elm::input('water_text', '文字水印', $config['water_text']['value'])->info($config['water_text']['remark']),
             Elm::select('water_position', '水印位置')->options([
                 ['value' => Image::WATER_NORTHWEST, 'label' => '标识左上角'],
@@ -53,7 +53,7 @@ class Setting
                 ['value' => Image::WATER_SOUTHWEST, 'label' => '标识左下角'],
                 ['value' => Image::WATER_SOUTH,     'label' => '标识下居中'],
                 ['value' => Image::WATER_SOUTHEAST, 'label' => '标识右下角'],
-            ])->info($config['water_position']['remark'])->value($config['water_position']['value']),
+            ])->info($config['water_position']['remark'])->value(intval($config['water_position']['value'])),
             Elm::uploadImage('water_image', '图片水印', '/ueditor/setting/upload_imgage', $config['water_image']['value'])->uploadName('water_image')->info($config['water_image']['remark']),
             Elm::input('upload_field_name', '上传表单字段名称', $config['upload_field_name']['value'])->maxlength(16)->required()->info($config['upload_field_name']['remark']),
             Elm::input('session_uid_key', 'session用户id标识', $config['session_uid_key']['value'])->maxlength(16)->required()->info($config['session_uid_key']['remark']),
@@ -63,13 +63,13 @@ class Setting
             Elm::input('filesystem_url', '文件系统访问路径', $config['filesystem_url']['value'])->info($config['filesystem_root']['remark'])->required(),
         ];
         //创建表单
-        $form = Form::elm('/ueditor/setting/save');
+        $form = Elm::createForm('/ueditor/setting/save');
         $form->setMethod('POST');
         $form->setTitle('Ueditor配置');
 
-        $form->setValue('thumb_type', $config['thumb_type']['value']);
-        $form->setValue('water', $config['water']['value']);
-        $form->setValue('water_position', $config['water_position']['value']);
+        // $form->setValue('thumb_type', $config['thumb_type']['value']);
+        // $form->setValue('water', $config['water']['value']);
+        // $form->setValue('water_position', $config['water_position']['value']);
 
         //添加组件
         $form->setRule($input);
