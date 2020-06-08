@@ -57,6 +57,13 @@ return [
         ".flv", ".swf", ".mkv", ".avi", ".rm", ".rmvb", ".mpeg", ".mpg",
         ".ogg", ".ogv", ".mov", ".wmv", ".mp4", ".webm", ".mp3", ".wav", ".mid"], /* 上传视频格式显示 */
 
+    /* 上传音频配置项 */
+    "audioActionName" => "upload_audio", /* 执行上传音频的action名称 */
+    "audioFieldName" => "upfile", /* 提交的音频表单名称 */
+    "audioMaxSize" => 30720000, /* 上传大小限制，单位B */
+    "audioAllowFiles" => [".mp3", ".wma", ".wav", ".amr"], /* 上传音频格式限制 */
+    "audioUrlPrefix" => "", /* 音频访问路径前缀 */
+
     /* 上传文件配置 */
     "fileActionName" => "upload_file", /* controller里,执行上传视频的action名称 */
     "fileFieldName" => "upfile", /* 提交的文件表单名称 */
