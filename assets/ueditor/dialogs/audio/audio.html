@@ -17,27 +17,26 @@
     <div class="wrapper">
         <div id="tabhead" class="tabhead">
             <span class="tab focus" data-content-id="remote"><var id="lang_tab_remote"></var></span>
-            <span class="tab focus" data-content-id="upload"><var id="lang_tab_upload"></var></span>
+            <span class="tab" data-content-id="upload"><var id="lang_tab_upload"></var></span>
         </div>
         <div id="tabbody" class="tabbody">
 
             <!-- 插入音频 -->
             <div id="remote" class="panel focus">
-               <table><tr><td><label for="audioUrl" class="url"><var id="lang_audio_url"></var></label></td><td><input id="audioUrl" type="text"></td></tr></table>
-               <div id="preview"></div>
-               <div id="audioInfo">
-                    <fieldset>
-                      <legend><var id="lang_alignment"></var></legend>
-                      <div id="audioFloat"></div>
-                    </fieldset>
+               <div class="titleBar">
+                    <label for="audioUrl" class="url"><var id="lang_audio_url"></var></label>
+                    <input id="audioUrl" type="text">
+                    <label class="url"><var id="lang_audio_title_1"></var></label>
+                    <input type="text" class="uploadAudioTitle" />
                </div>
+               <div id="preview"></div>
             </div>
 
             <!-- 上传音频 -->
             <div id="upload" class="panel">
                 <div class="titleBar">
-                    <label>标题</label>
-                    <input type="text" class="uploadAudioTitle"/>
+                    <label class="url"><var id="lang_audio_title_2"></var></label>
+                    <input type="text" class="uploadAudioTitle" />
                 </div>
                 <div id="queueList" class="queueList">
                     <div class="statusBar element-invisible">

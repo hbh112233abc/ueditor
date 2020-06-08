@@ -91,17 +91,10 @@
      * 将单个音频插入编辑器中
      */
     function RemoteAudio(){
-        var width = $G("videoWidth"),
-            height = $G("videoHeight"),
-            url=$G('videoUrl').value,
-            align = findFocus("videoFloat","name");
+        var url=$G('audioUrl').value;
         if(!url) return false;
-        if ( !checkNum( [width, height] ) ) return false;
-        editor.execCommand('insertvideo', {
-            url: convert_url(url),
-            width: width.value,
-            height: height.value,
-            align: align
+        editor.execCommand('insertaudio', {
+            url: convert_url(url)
         }, isModifyUploadVideo ? 'upload':null);
     }
 
