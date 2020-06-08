@@ -1901,3 +1901,18 @@ div.edui-box {
 .edui-default  .edui-pastecontainer .edui-button  .edui-state-hover .edui-plaintxticon{
     background-position: -72px -34px;
 }
+
+.edui-default  .edui-for-insertaudio .edui-icon {
+    background-position: -320px -20px;
+}
+
+/*audio-dialog*/
+.edui-default .edui-for-insertaudio .edui-dialog-content {
+    width: 590px;
+    height: 390px;
+}
+
+/* audio*/
+.edui-default  .edui-for-insertaudio .edui-icon {
+    background-image: url(../images/audio.png) !important;
+}
