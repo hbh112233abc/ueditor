@@ -2,12 +2,11 @@
 
     var insertaudio,
         uploadaudio;
-    // 音频文件key前缀
-    var keyPrefix = editor.getOpt('keyPrefix') + '/audio';
 
     window.onload = function () {
         initTabs();
         initButtons();
+        addUrlChangeListener($G("videoUrl"));
     };
 
     /* 初始化tab标签 */
@@ -32,12 +31,12 @@
             });
         }
         switch (id) {
-        case 'remote':  // 插入音频/远程音频（预留）
-            insertaudio = insertaudio || new RemoteAudio();
-            break;
-        case 'upload':  // 上传音频（主要）
-            uploadaudio = uploadaudio || new UploadAudio('queueList');
-            break;
+            case 'remote':  // 插入音频/远程音频（预留）
+                insertaudio = insertaudio || new RemoteAudio();
+                break;
+            case 'upload':  // 上传音频（主要）
+                uploadaudio = uploadaudio || new UploadAudio('queueList');
+                break;
         }
     }
 
@@ -64,10 +63,10 @@
                     }
 
                     // 配上标题
-                    var title = $('.uploadAudioTitle').val();
+                    var title = $('#audio_title_2').val();
                     if (!title || $.trim(title) == '') {
                         alert('请填写标题');
-                        $('.uploadAudioTitle').focus();
+                        $('#audio_title_2').focus();
                         return false;
                     }
                     if(list) {
@@ -88,15 +87,64 @@
     }
 
     /**
+     * 监听url改变事件
+     * @param url
+     */
+    function addUrlChangeListener(url){
+        if (browser.ie) {
+            url.onpropertychange = function () {
+                createPreviewAudio( this.value );
+            }
+        } else {
+            url.addEventListener( "input", function () {
+                createPreviewAudio( this.value );
+            }, false );
+        }
+    }
+
+    /**
+     * 根据url生成音频预览
+     * @param url
+     */
+    function createPreviewVideo(url,title){
+        if ( !url )return;
+        title = title || '';
+        var key = new Date();
+        $G("preview").innerHTML = createAudioHtml(key,url,title);
+    }
+
+    /**
      * 将单个音频插入编辑器中
      */
-    function RemoteAudio(){
-        var url=$G('audioUrl').value;
-        if(!url) return false;
-        editor.execCommand('insertaudio', {
-            url: convert_url(url)
-        }, isModifyUploadVideo ? 'upload':null);
+    function RemoteAudio() {
+        this.init();
     }
+
+    RemoteAudio.prototype = {
+        init:function(){
+
+        },
+        getInsertList:function(){
+            var url=$G('audioUrl').value;
+            if(!url) return false;
+            // 配上标题
+            var title = $('#audio_title_1').val();
+            if (!title || $.trim(title) == '') {
+                alert('请填写标题');
+                $('#audio_title_1').focus();
+                return false;
+            }
+            var list = [
+                {
+                    src:url,
+                    key:new Date(),
+                    title:title,
+                }
+            ];
+        }
+    }
+
+
 
     /* 上传音频 */
     function UploadAudio(target) {

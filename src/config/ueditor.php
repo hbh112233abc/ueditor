@@ -61,7 +61,7 @@ return [
     "audioActionName" => "upload_audio", /* 执行上传音频的action名称 */
     "audioFieldName" => "upfile", /* 提交的音频表单名称 */
     "audioMaxSize" => 30720000, /* 上传大小限制，单位B */
-    "audioAllowFiles" => [".mp3", ".wma", ".wav", ".amr"], /* 上传音频格式限制 */
+    "audioAllowFiles" => [".mp3", ".wav", ".ogg"], /* 上传音频格式限制 */
     "audioUrlPrefix" => "", /* 音频访问路径前缀 */
 
     /* 上传文件配置 */

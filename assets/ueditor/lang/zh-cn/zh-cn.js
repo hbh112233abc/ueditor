@@ -430,7 +430,7 @@ UE.I18N['zh-cn'] = {
         'static' : {
             'lang_tab_remote' : "插入",
             'lang_tab_upload' : "上传",
-            'lang_audio_url' : "音频URL",
+            'lang_audio_url' : "音频链接",
             'lang_audio_title_1' : "音频标题",
             'lang_audio_title_2' : "音频标题",
         },
