@@ -12049,7 +12049,7 @@ UE.plugins['audio'] = function (){
                 var src = createAudioHtml(audioObjs[i].key, audioObjs[i].src, audioObjs[i].title);
                 html.push(src);
             }
-            me.execCommand("inserthtml", html.join(""));
+            me.execCommand("inserthtml", html.join(""),true);
             // 初始化音频控件
             initAudio(audioObjs);
             me.focus();
@@ -12073,11 +12073,11 @@ UE.plugins['audio'] = function (){
             +'<div class="audio-right" style="margin-right: 5%;float: right;width: 73%;height: 100%;">'
             +'<p class="audio-title" style="max-width: 536px;font-size: 15px;height: 35%;margin: 8px 0;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;">' + audioTitle + '</p>'
             +'<div class="progress-bar-bg" style="background-color: #d9d9d9;position: relative;height: 2px;cursor: pointer;">'
-            +'<span class="progressDot" style="content: \' \';width: 12px;height: 12px;border-radius: 50%;-moz-border-radius: 50%;-webkit-border-radius: 50%;background-color: #3e87e8;position: absolute;left: 0;top: -5px;margin-left: 0px;cursor: pointer;"></span>'
-            +'<div class="progressBar" style="background-color: #649fec;width: 0;height: 2px;"></div>'
+            +'<span class="progress-dot" style="content: \' \';width: 12px;height: 12px;border-radius: 50%;-moz-border-radius: 50%;-webkit-border-radius: 50%;background-color: #3e87e8;position: absolute;left: 0;top: -5px;margin-left: 0px;cursor: pointer;"></span>'
+            +'<div class="progress-bar" style="background-color: #649fec;width: 0;height: 2px;"></div>'
             +'</div>'
             +'<div class="audio-time" style="overflow: hidden;margin-top: -1px;">'
-            +'<span class="audioCurTime" style="float: left;margin-top:10px;font-size: 12px;color: #969696">00:00</span><span class="audioTotalTime" style="float: right;margin-top:10px;font-size: 12px;color: #969696">00:00</span>'
+            +'<span class="audio-length-current" style="float: left;margin-top:10px;font-size: 12px;color: #969696">00:00</span><span class="audio-length-total" style="float: right;margin-top:10px;font-size: 12px;color: #969696"></span>'
             +'</div>'
             +'</div>'
             +'</div><br/>';
@@ -12106,6 +12106,7 @@ UE.plugins['audio'] = function (){
     function initAudioEvent(audioDiv) {
         // div子节点
         var divArr = domUtils.getElementsByTagName(audioDiv, 'div');
+        console.log('divArr',divArr);
         // audio控件
         var audio = domUtils.getElementsByTagName(audioDiv, 'audio')[0];
         // 控制音频文件名显示宽度
@@ -12135,12 +12136,12 @@ UE.plugins['audio'] = function (){
         var timeSpanArr = domUtils.getElementsByTagName(timeDiv, 'span');
         // 已播放时间
         var audioCurTime = domUtils.filterNodeList(timeSpanArr, function(node) {
-            return node.className === 'audioCurTime';
+            return node.className === 'audio-length-current';
         });
         audioCurTime.innerHTML = '00:00';   // 初始化为0
         // 总时间
         var audioTotalTime = domUtils.filterNodeList(timeSpanArr, function(node) {
-            return node.className === 'audioTotalTime';
+            return node.className === 'audio-length-total';
         });
 
         // 点击播放/暂停图片时，控制音乐的播放与暂停
@@ -12180,8 +12181,7 @@ UE.plugins['audio'] = function (){
 
             // 监听播放完成事件
             audio.addEventListener('ended', function () {
-                audioEnded(progressBar, progressDot,
-audioCurTime, playImg, pauseImg)
+                audioEnded(progressBar, progressDot,audioCurTime, playImg, pauseImg)
             }, false);
             // 播放
             audio.play();

@@ -12,23 +12,25 @@
 <body>
     <div class="audio-wrapper">
         <audio size="#4.50MB" duration="#01:57" filename="#Launch_Kan R. Gao.mp3">
-            <source src="http://file.duzhai.net/Files/Audio/2017-08/af01ab05-d112-4ad7-9cff-2cfecced5bc6.mp3" type="audio/mp3">
+            <!-- <source src="http://file.duzhai.net/Files/Audio/2017-08/af01ab05-d112-4ad7-9cff-2cfecced5bc6.mp3" type="audio/mp3"> -->
+            <source src="http://www.efileyun.cn/test.mp3">
         </audio>
         <div class="audio-left">
-            <img id="audioPlayer" src="./image/play.png">
+            <img class="audio-icon" src="./image/play.png">
         </div>
         <div class="audio-right">
             <p style="max-width: 536px;">Launch_Kan R. Gao.mp3</p>
-            <div class="progress-bar-bg" id="progressBarBg">
-                <span id="progressDot"></span>
-                <div class="progress-bar" id="progressBar"></div>
+            <div class="progress-bar-bg">
+                <span class="progress-dot"></span>
+                <div class="progress-bar"></div>
             </div>
             <div class="audio-time">
-                <span class="audio-length-current" id="audioCurTime">00:00</span>
+                <span class="audio-length-current" class="audioCurTime">00:00</span>
                 <span class="audio-length-total">01:57</span>
             </div>
         </div>
     </div>
+    <audio controls><source src="http://www.efileyun.cn/test.mp3" type="audio/mp3"></audio>
 </body>
 
 </html>

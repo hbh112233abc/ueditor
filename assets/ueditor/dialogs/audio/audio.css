@@ -61,14 +61,14 @@
     border: 2px dashed #e6e6e6;
     *border: 0px dashed #e6e6e6;
     height: 120px;
-    padding-top: 110px;
     text-align: center;
-    width: 96%;
+    width: 92%;
     float: left;
     color: #cccccc;
     font-size: 18px;
     position: relative;
     top:0;
+    padding:10px;
     *margin-left: 0;
     *left: 10px;
 }
@@ -156,12 +156,12 @@ span.view{display: inline-block;width: 30px;float: right;cursor: pointer;color: 
     margin-right:0;
     border: 2px dashed #e6e6e6;
     *border: 0px dashed #e6e6e6;
-    height: 161px;
-    padding-top: 110px;
+    height: 100px;
+    padding-top: 160px;
     text-align: center;
     width: 96%;
     float: left;
-    background: url(./images/image.png) center 70px no-repeat;
+    background: url(./images/music.png) center 70px no-repeat;
     color: #cccccc;
     font-size: 18px;
     position: relative;

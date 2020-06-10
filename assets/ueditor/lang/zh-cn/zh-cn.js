@@ -433,6 +433,7 @@ UE.I18N['zh-cn'] = {
             'lang_audio_url' : "音频链接",
             'lang_audio_title_1' : "音频标题",
             'lang_audio_title_2' : "音频标题",
+            'lang_start_upload' : "上传音频",
         },
         'uploadSelectFile' : '点击选择音频文件',
         'uploadAddFile' : '继续添加',

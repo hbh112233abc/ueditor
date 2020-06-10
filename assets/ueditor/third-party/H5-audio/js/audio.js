@@ -1,4 +1,8 @@
 document.addEventListener('DOMContentLoaded', function () {
+    initAudio();
+}, false);
+
+function initAudio(){
     // 设置音频文件名显示宽度
     var element = document.querySelector('.audio-right');
     if (element == undefined) return;
@@ -6,13 +10,21 @@ document.addEventListener('DOMContentLoaded', function () {
     document.querySelector('.audio-right p').style.maxWidth = maxWidth;
 
     // 初始化音频控制事件
-    initAudioEvent();
-}, false);
+    var audioList = document.querySelectorAll('.audio-wrapper');
+    console.log(audioList);
+    audioList.forEach(function(e,i){
+        initAudioEvent(e);
+    })
+}
 
-function initAudioEvent() {
-    var audio = document.getElementsByTagName('audio')[0];
-    var audioPlayer = document.getElementById('audioPlayer');
 
+function initAudioEvent(e) {
+    var audio = e.getElementsByTagName('audio')[0];
+    var audioPlayer = e.querySelector('.audio-left img');
+    // var src = audio.querySelector('source').getAttribute('src');
+    // if(!urlCheck(src)){
+    //     e.querySelector('.audio-title').innerHTML = '<b style="color:red;">audio load error!</b>';
+    // }
     // // 添加音频自动播放功能
     // // PS：不完善，在chrome下会报错，原因看这里https://developers.google.com/web/updates/2017/09/autoplay-policy-changes
     // audio.addEventListener('canplaythrough', function (event) {
@@ -29,14 +41,24 @@ function initAudioEvent() {
     //     }
     // });
 
+    //设置音频总时间
+    audio.onloadedmetadata = function(){
+        e.querySelector('.audio-right .audio-length-total').innerText = transTime(audio.duration);
+    }
+
+
+    audio.addEventListener('error',function(){
+        e.querySelector('.audio-title').innerHTML = '<b style="color:red;">audio load error!</b>';
+    });
+
     // 监听音频播放时间并更新进度条
     audio.addEventListener('timeupdate', function () {
-        updateProgress(audio);
+        updateProgress(e,audio);
     }, false);
 
     // 监听播放完成事件
     audio.addEventListener('ended', function () {
-        audioEnded();
+        audioEnded(e);
     }, false);
 
     // 点击播放/暂停图片时，控制音乐的播放与暂停
@@ -45,36 +67,37 @@ function initAudioEvent() {
         if (audio.paused) {
             // 开始播放当前点击的音频
             audio.play();
-            audioPlayer.src = './image/pause.png';
+            audioPlayer.src = audioPlayer.src.replace('play.png','pause.png');
         } else {
             audio.pause();
-            audioPlayer.src = './image/play.png';
+            audioPlayer.src = audioPlayer.src.replace('pause.png','play.png');
         }
     }, false);
 
     // 点击进度条跳到指定点播放
     // PS：此处不要用click，否则下面的拖动进度点事件有可能在此处触发，此时e.offsetX的值非常小，会导致进度条弹回开始处（简直不能忍！！）
-    var progressBarBg = document.getElementById('progressBarBg');
+    var progressBarBg = e.querySelector('.progress-bar-bg');
     progressBarBg.addEventListener('mousedown', function (event) {
         // 只有音乐开始播放后才可以调节，已经播放过但暂停了的也可以
         if (!audio.paused || audio.currentTime != 0) {
             var pgsWidth = parseFloat(window.getComputedStyle(progressBarBg, null).width.replace('px', ''));
             var rate = event.offsetX / pgsWidth;
             audio.currentTime = audio.duration * rate;
-            updateProgress(audio);
+            updateProgress(e,audio);
         }
     }, false);
 
     // 拖动进度点调节进度
-    dragProgressDotEvent(audio);
+    dragProgressDotEvent(e,audio);
 }
 
 /**
  * 鼠标拖动进度点时可以调节进度
+ * @param {DataView.audio-wrapper} e
  * @param {*} audio
  */
-function dragProgressDotEvent(audio) {
-    var dot = document.getElementById('progressDot');
+function dragProgressDotEvent(e,audio) {
+    var dot = e.querySelector('.progress-dot');
 
     var position = {
         oriOffestLeft: 0, // 移动开始时进度条的点距离进度条的偏移值
@@ -103,7 +126,7 @@ function dragProgressDotEvent(audio) {
             position.oriOffestLeft = dot.offsetLeft;
             position.oriX = event.touches ? event.touches[0].clientX : event.clientX; // 要同时适配mousedown和touchstart事件
             position.maxLeft = position.oriOffestLeft; // 向左最大可拖动距离
-            position.maxRight = document.getElementById('progressBarBg').offsetWidth - position.oriOffestLeft; // 向右最大可拖动距离
+            position.maxRight = e.querySelector('.progress-bar-bg').offsetWidth - position.oriOffestLeft; // 向右最大可拖动距离
 
             // 禁止默认事件（避免鼠标拖拽进度点的时候选中文字）
             if (event && event.preventDefault) {
@@ -130,11 +153,11 @@ function dragProgressDotEvent(audio) {
             } else if (length < -position.maxLeft) {
                 length = -position.maxLeft;
             }
-            var progressBarBg = document.getElementById('progressBarBg');
+            var progressBarBg = e.querySelector('.progress-bar-bg');
             var pgsWidth = parseFloat(window.getComputedStyle(progressBarBg, null).width.replace('px', ''));
             var rate = (position.oriOffestLeft + length) / pgsWidth;
             audio.currentTime = audio.duration * rate;
-            updateProgress(audio);
+            updateProgress(e,audio);
         }
     }
 
@@ -147,21 +170,21 @@ function dragProgressDotEvent(audio) {
  * 更新进度条与当前播放时间
  * @param {object} audio - audio对象
  */
-function updateProgress(audio) {
+function updateProgress(e,audio) {
     var value = audio.currentTime / audio.duration;
-    document.getElementById('progressBar').style.width = value * 100 + '%';
-    document.getElementById('progressDot').style.left = value * 100 + '%';
-    document.getElementById('audioCurTime').innerText = transTime(audio.currentTime);
+    e.querySelector('.progress-bar').style.width = value * 100 + '%';
+    e.querySelector('.progress-dot').style.left = value * 100 + '%';
+    e.querySelector('.audio-length-current').innerText = transTime(audio.currentTime);
 }
 
 /**
  * 播放完成时把进度调回开始的位置
  */
-function audioEnded() {
-    document.getElementById('progressBar').style.width = 0;
-    document.getElementById('progressDot').style.left = 0;
-    document.getElementById('audioCurTime').innerText = transTime(0);
-    document.getElementById('audioPlayer').src = './image/play.png';
+function audioEnded(e) {
+    e.querySelector('.progress-bar').style.width = 0;
+    e.querySelector('.progress-dot').style.left = 0;
+    e.querySelector('.audio-length-current').innerText = transTime(0);
+    e.querySelector('.audio-left img').src = e.querySelector('.audio-left img').src.replace('pause.png','play.png');
 }
 
 /**

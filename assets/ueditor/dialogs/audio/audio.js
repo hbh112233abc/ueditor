@@ -6,8 +6,10 @@
     window.onload = function () {
         initTabs();
         initButtons();
-        addUrlChangeListener($G("videoUrl"));
+        addUrlChangeListener($G("audioUrl"));
+        addTitleChangeListener($(".uploadAudioTitle"));
     };
+
 
     /* 初始化tab标签 */
     function initTabs() {
@@ -28,13 +30,27 @@
                         domUtils.removeClasses($G(bodyId), 'focus');
                     }
                 }
+                switch (id) {
+                    case 'remote':
+                        insertaudio = insertaudio || new RemoteAudio();
+                        break;
+                    case 'upload':
+                        uploadaudio = uploadaudio || new UploadAudio('queueList');
+                        break;
+                }
             });
         }
+        for (var i = 0; i < tabs.length; i++) {
+            if (domUtils.hasClass(tabs[i], 'focus')) {
+                id = tabs[i].getAttribute('data-content-id');
+                break;
+            }
+        }
         switch (id) {
-            case 'remote':  // 插入音频/远程音频（预留）
+            case 'remote':
                 insertaudio = insertaudio || new RemoteAudio();
                 break;
-            case 'upload':  // 上传音频（主要）
+            case 'upload':
                 uploadaudio = uploadaudio || new UploadAudio('queueList');
                 break;
         }
@@ -78,7 +94,6 @@
                     }
                     break;
             }
-
             if(list) {
                 editor.execCommand('insertaudio', list);
                 remote && editor.fireEvent("catchRemoteAudio");
@@ -93,24 +108,92 @@
     function addUrlChangeListener(url){
         if (browser.ie) {
             url.onpropertychange = function () {
-                createPreviewAudio( this.value );
+                if($('#audio_title_1').val() == ''){
+                    var basename = this.value.split('\/').pop();
+                    $('#audio_title_1').val(basename);
+                }
+                createPreviewAudio( this.value,$('#audio_title_1').val());
             }
         } else {
-            url.addEventListener( "input", function () {
-                createPreviewAudio( this.value );
+            url.addEventListener( "change", function () {
+                if($('#audio_title_1').val() == ''){
+                    var basename = this.value.split('\/').pop();
+                    $('#audio_title_1').val(basename);
+                }
+                createPreviewAudio( this.value,$('#audio_title_1').val());
             }, false );
         }
+
+    }
+
+    /**
+     * 监听title改变事件
+     * @param title
+     */
+    function addTitleChangeListener(title){
+        title.on('change',function(e){
+            console.log(e)
+            console.log($(e.target).val());
+            $('#preview').find('.audio-title').text($(e.target).val());
+        });
     }
 
     /**
      * 根据url生成音频预览
      * @param url
      */
-    function createPreviewVideo(url,title){
+    function createPreviewAudio(url,title){
         if ( !url )return;
+        var ext = getType(url);
+        if(!(['.mp3','.wav','.ogg'].includes(ext))){
+            alert('仅支持mp3,ogg,wav格式');
+            return;
+        }
         title = title || '';
-        var key = new Date();
-        $G("preview").innerHTML = createAudioHtml(key,url,title);
+        var key = new Date().getTime();
+        document.querySelector("#preview").innerHTML = createAudioHtml(key,url,title);
+        initAudioEvent(document.querySelector("#preview .audio-wrapper"));
+    }
+
+    //获取文件后缀
+    function getType(file){
+        var filename=file;
+        var index1=filename.lastIndexOf(".");
+        var index2=filename.length;
+        var type=filename.substring(index1,index2);
+        return type;
+    }
+
+
+    /**
+     * 构造音频控件html
+     *
+     * @param {string} audioDivId - 音频控件父div的id
+     * @param {string} audioSrc - 音频控件地址
+     * @param {string} audioTitle - 音频标题
+     */
+    function createAudioHtml(audioDivId, audioSrc, audioTitle) {
+        var playicon = '../../third-party/H5-audio/image/play.png';
+        var src = '<div class="audio-wrapper" id="'+audioDivId+'">'
+                +'    <audio>'
+                +'        <source src="'+audioSrc+'">'
+                +'    </audio>'
+                +'    <div class="audio-left">'
+                +'        <img class="audio-icon" src="'+playicon+'">'
+                +'    </div>'
+                +'    <div class="audio-right">'
+                +'        <p class="audio-title" style="max-width: 536px;">'+audioTitle+'</p>'
+                +'        <div class="progress-bar-bg">'
+                +'            <span class="progress-dot"></span>'
+                +'            <div class="progress-bar"></div>'
+                +'        </div>'
+                +'        <div class="audio-time">'
+                +'            <span class="audio-length-current">00:00</span>'
+                +'            <span class="audio-length-total"></span>'
+                +'        </div>'
+                +'    </div>'
+                +'</div>';
+        return src;
     }
 
     /**
@@ -137,10 +220,11 @@
             var list = [
                 {
                     src:url,
-                    key:new Date(),
+                    key:new Date().getTime(),
                     title:title,
                 }
             ];
+            return list;
         }
     }
 
@@ -163,53 +247,48 @@
         /* 初始化容器 */
         initUploader: function () {
             var _this = this,
-                $ = jQuery,    // just in case. Make sure it's not an other libaray.
-                $wrap = _this.$wrap,
+            $ = jQuery,    // just in case. Make sure it's not an other libaray.
+            $wrap = _this.$wrap,
             // 文件容器
-                $queue = $wrap.find('.filelist'),
+            $queue = $wrap.find('.filelist'),
             // 状态栏，包括进度和控制按钮
-                $statusBar = $wrap.find('.statusBar'),
+            $statusBar = $wrap.find('.statusBar'),
             // 文件总体选择信息。
-                $info = $statusBar.find('.info'),
+            $info = $statusBar.find('.info'),
             // 上传按钮
-                $upload = $wrap.find('.uploadBtn'),
+            $upload = $wrap.find('.uploadBtn'),
             // 上传按钮
-                $filePickerBtn = $wrap.find('.filePickerBtn'),
+            $filePickerBtn = $wrap.find('.filePickerBtn'),
             // 上传按钮
-                $filePickerBlock = $wrap.find('.filePickerBlock'),
+            $filePickerBlock = $wrap.find('.filePickerBlock'),
             // 没选择文件之前的内容。
-                $placeHolder = $wrap.find('.placeholder'),
+            $placeHolder = $wrap.find('.placeholder'),
             // 总体进度条
-                $progress = $statusBar.find('.progress').hide(),
+            $progress = $statusBar.find('.progress').hide(),
             // 添加的文件数量
-                fileCount = 0,
+            fileCount = 0,
             // 添加的文件总大小
-                fileSize = 0,
-            // 优化retina, 在retina下这个值是2
-                ratio = window.devicePixelRatio || 1,
-            // 缩略图大小
-                thumbnailWidth = 550 * ratio,
-                thumbnailHeight = 113 * ratio,
+            fileSize = 0,
+
             // 可能有pedding, ready, uploading, confirm, done.
-                state = '',
+            state = '',
             // 所有文件的进度信息，key为file id
-                percentages = {},
-                supportTransition = (function () {
-                    var s = document.createElement('p').style,
-                        r = 'transition' in s ||
-                            'WebkitTransition' in s ||
-                            'MozTransition' in s ||
-                            'msTransition' in s ||
-                            'OTransition' in s;
-                    s = null;
-                    return r;
-                })(),
+            percentages = {},
+            supportTransition = (function () {
+                var s = document.createElement('p').style,
+                    r = 'transition' in s ||
+                        'WebkitTransition' in s ||
+                        'MozTransition' in s ||
+                        'msTransition' in s ||
+                        'OTransition' in s;
+                s = null;
+                return r;
+            })(),
             // WebUploader实例
-                uploader,
-                actionUrl = editor.getActionUrl(editor.getOpt('audioActionName')),
-                acceptExtensions = (editor.getOpt('audioAllowFiles') || []).join('').replace(/\./g, ',').replace(/^[,]/, ''),
-                audioMaxSize = editor.getOpt('audioMaxSize'),
-                imageCompressBorder = editor.getOpt('imageCompressBorder');
+            uploader,
+            actionUrl = editor.getActionUrl(editor.getOpt('audioActionName')),
+            acceptExtensions = (editor.getOpt('audioAllowFiles') || []).join('').replace(/\./g, ',').replace(/^[,]/, ''),
+            audioMaxSize = editor.getOpt('audioMaxSize');
 
             if (!WebUploader.Uploader.support()) {
                 $('#filePickerReady').after($('<div>').html(lang.errorNotSupport)).hide();
@@ -240,10 +319,10 @@
             uploader.addButton({
                 id: '#filePickerBlock'
             });
-//            uploader.addButton({
-//                id: '#filePickerBtn',
-//                label: lang.uploadAddFile
-//            });
+            uploader.addButton({
+               id: '#filePickerBtn',
+               label: lang.uploadAddFile
+            });
 
             setState('pedding');
 
@@ -438,7 +517,6 @@
                         /* 上传中 */
                         case 'uploading':
                             $progress.show(); $info.hide();
-//                            $upload.text(lang.uploadPause);
                             $upload.text(lang.uploadCancel);
                             break;
 
@@ -551,9 +629,6 @@
                     case 'startUpload':
                         /* 添加额外的GET参数 */
                         var params = utils.serializeParam(editor.queryCommandValue('serverparam')) || '';
-                            //url = utils.formatUrl(actionUrl + (actionUrl.indexOf('?') == -1 ? '?':'&') + 'encode=utf-8&' + params);
-                        uploader.option('server', editor.getOpt('imageUrl'));
-
                         setState('uploading', files);
                         break;
                     case 'stopUpload':
@@ -597,6 +672,9 @@
                         //_this.audioList.push(json);
                         _this.audioList[$file.index()] = json;   //按选择好的文件列表顺序存储
                         $file.append('<span class="success"></span>');
+                        if($('#audio_title_2').val() == ''){
+                            $('#audio_title_2').val(json.title);
+                        }
                     } else {
                         $file.find('.error').text(json.state).show();
                     }
@@ -627,13 +705,11 @@
                 } else if (state === 'cancel') {
                     uploader.upload();
                 } else if (state === 'uploading') {
-//                  uploader.stop();
                     // 调整为取消上传
                     var file = uploader.getFiles()[0];
                     uploader.stop(file);
-//                  removeFile(file);
                     cancelFile(file);
-//                    setState('cancel');
+                    //setState('cancel');
                 }
             });
 
@@ -661,8 +737,8 @@
                 }
                 //修改END
                 list.push({
-                    src: prefix + data.key,
-                    key: + new Date()   // 以时间戳作为音频控件父div的id
+                    src: prefix + data.url,
+                    key: + new Date().getTime()   // 以时间戳作为音频控件父div的id
                 });
             }
             return list;
