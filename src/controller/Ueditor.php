@@ -201,7 +201,7 @@ class Ueditor
         $data     = [
             'url'      => path_join($this->urlPath, $saveName),
             'title'    => $_FILES[$this->upField]['name'],
-            'original' => $saveFile->getFileName(),
+            'original' => $_FILES[$this->upField]['name'],
             'type'     => '.' . $ext,
             'size'     => $saveFile->getSize(),
         ];
