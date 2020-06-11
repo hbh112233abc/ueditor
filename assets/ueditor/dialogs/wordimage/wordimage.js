@@ -27,6 +27,7 @@ function hideFlash(){
 }
 function addOkListener() {
 	dialog.onok = function() {
+		console.log(imageUrls);
 		if (!imageUrls.length) return;
 		var urlPrefix = editor.getOpt('imageUrlPrefix'),
             images = domUtils.getElementsByTagName(editor.document,"img");

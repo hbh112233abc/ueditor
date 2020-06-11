@@ -11,16 +11,16 @@
 function ue_view(string $name = 'ueditor', string $content = '', array $config = [])
 {
     $default = [
-        "serverUrl" => '/ueditor/index',
-        "UEDITOR_HOME_URL" => '/static/bingher/ueditor/',
+        "serverUrl"          => '/ueditor/index',
+        "UEDITOR_HOME_URL"   => '/static/bingher/ueditor/',
         "initialFrameHeight" => 600,
-        "autoHeightEnabled" => true,
-        "maximumWords" => 200000,
-        "initialContent" => $content,
+        "autoHeightEnabled"  => true,
+        "maximumWords"       => 200000,
+        "initialContent"     => $content,
     ];
-    $config = array_merge($default, $config);
+    $config     = array_merge($default, $config);
     $configJson = json_encode($config);
-    $result = <<<tpl
+    $result     = <<<tpl
 <script id="{$name}" name="{$name}" type="text/plain"></script>
 <!-- 引入ueditor的js代码 -->
 <script src="/static/bingher/ueditor/ueditor.config.js"></script>

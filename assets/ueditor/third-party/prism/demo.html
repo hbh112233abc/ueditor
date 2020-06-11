@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>prism demo</title>
+    <link rel="stylesheet" type="text/css" href="./prism.css">
+    <script type="text/javascript" src="./prism.js"></script>
+</head>
+<body>
+    <pre>
+        <code class="line-numbers language-php">
+            namespace think;
+
+            require __DIR__ . '/../vendor/autoload.php';
+
+            // 执行HTTP应用并响应
+            $http = (new App())->http;
+
+            $response = $http->run();
+
+            $response->send();
+
+            $http->end($response);
+        </code>
+    </pre>
+</body>
+</html>

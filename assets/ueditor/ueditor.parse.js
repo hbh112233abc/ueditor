@@ -334,48 +334,115 @@
     }
 })();
 
-UE.parse.register('insertcode',function(utils){
-    var pres = this.root.getElementsByTagName('pre');
-    if(pres.length){
-        if(typeof XRegExp == "undefined"){
-            var jsurl,cssurl;
-            if(this.rootPath !== undefined){
-                jsurl = utils.removeLastbs(this.rootPath)  + '/third-party/SyntaxHighlighter/shCore.js';
-                cssurl = utils.removeLastbs(this.rootPath) + '/third-party/SyntaxHighlighter/shCoreDefault.css';
-            }else{
-                jsurl = this.highlightJsUrl;
-                cssurl = this.highlightCssUrl;
-            }
-            utils.loadFile(document,{
-                id : "syntaxhighlighter_css",
-                tag : "link",
-                rel : "stylesheet",
-                type : "text/css",
-                href : cssurl
-            });
-            utils.loadFile(document,{
-                id : "syntaxhighlighter_js",
-                src : jsurl,
-                tag : "script",
-                type : "text/javascript",
-                defer : "defer"
-            },function(){
-                utils.each(pres,function(pi){
-                    if(pi && /brush/i.test(pi.className)){
-                        SyntaxHighlighter.highlight(pi);
-                    }
-                });
-            });
-        }else{
-            utils.each(pres,function(pi){
-                if(pi && /brush/i.test(pi.className)){
-                    SyntaxHighlighter.highlight(pi);
-                }
-            });
-        }
-    }
+// UE.parse.register('insertcode',function(utils){
+//     var pres = this.root.getElementsByTagName('pre');
+//     if(pres.length){
+//         if(typeof XRegExp == "undefined"){
+//             var jsurl,cssurl;
+//             if(this.rootPath !== undefined){
+//                 jsurl = utils.removeLastbs(this.rootPath)  + '/third-party/SyntaxHighlighter/shCore.js';
+//                 cssurl = utils.removeLastbs(this.rootPath) + '/third-party/SyntaxHighlighter/shCoreDefault.css';
+//             }else{
+//                 jsurl = this.highlightJsUrl;
+//                 cssurl = this.highlightCssUrl;
+//             }
+//             utils.loadFile(document,{
+//                 id : "syntaxhighlighter_css",
+//                 tag : "link",
+//                 rel : "stylesheet",
+//                 type : "text/css",
+//                 href : cssurl
+//             });
+//             utils.loadFile(document,{
+//                 id : "syntaxhighlighter_js",
+//                 src : jsurl,
+//                 tag : "script",
+//                 type : "text/javascript",
+//                 defer : "defer"
+//             },function(){
+//                 utils.each(pres,function(pi){
+//                     if(pi && /brush/i.test(pi.className)){
+//                         SyntaxHighlighter.highlight(pi);
+//                     }
+//                 });
+//             });
+//         }else{
+//             utils.each(pres,function(pi){
+//                 if(pi && /brush/i.test(pi.className)){
+//                     SyntaxHighlighter.highlight(pi);
+//                 }
+//             });
+//         }
+//     }
 
+// });
+
+// UE.parse.register("insertcode", function(utils) {
+//     var pres = this.root.getElementsByTagName("pre");
+//     if (pres.length) {
+//         var jsurl, cssurl;
+//         if (this.rootPath !== undefined) {
+//             jsurl = utils.removeLastbs(this.rootPath) + "/third-party/highlight/highlight.pack.js"; // 高亮脚本
+//             cssurl = utils.removeLastbs(this.rootPath) + "/third-party/highlight/styles/a11y-dark.css"; // 样式文件，这里可以修改成自己喜欢的主题样式
+//         } else {
+//             jsurl = this.highlightJsUrl;
+//             cssurl = this.highlightCssUrl;
+//         }
+//         utils.loadFile(document, {
+//             id: "highlight_css",
+//             tag: "link",
+//             rel: "stylesheet",
+//             type: "text/css",
+//             href: cssurl
+//         });
+//         utils.loadFile(
+//             document, {
+//                 id: "highlight_js",
+//                 src: jsurl,
+//                 tag: "script",
+//                 type: "text/javascript",
+//                 defer: "defer"
+//             },
+//             function() {
+//                 hljs.initHighlightingOnLoad();
+//                 hljs.initHighlighting();
+//             }
+//         );
+//     }
+// });
+//
+
+UE.parse.register("insertcode", function(utils) {
+    var pres = this.root.getElementsByTagName("pre");
+    if (pres.length) {
+        var jsurl, cssurl;
+        if (this.rootPath !== undefined) {
+            jsurl = utils.removeLastbs(this.rootPath) + "/third-party/prism/prism.js"; // 高亮脚本
+            cssurl = utils.removeLastbs(this.rootPath) + "/third-party/prism/prism.css"; // 样式文件，这里可以修改成自己喜欢的主题样式
+        } else {
+            jsurl = this.highlightJsUrl;
+            cssurl = this.highlightCssUrl;
+        }
+        utils.loadFile(document, {
+            id: "prism_css",
+            tag: "link",
+            rel: "stylesheet",
+            type: "text/css",
+            href: cssurl
+        });
+        utils.loadFile(
+            document, {
+                id: "prism_js",
+                src: jsurl,
+                tag: "script",
+                type: "text/javascript"
+            },
+            function() {
+            }
+        );
+    }
 });
+
 UE.parse.register('table', function (utils) {
     var me = this,
         root = this.root,

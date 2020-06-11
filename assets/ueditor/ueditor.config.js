@@ -57,6 +57,9 @@
             'insertaudio' : '音频',
         }
 
+        //禁用div转p标签
+        ,allowDivTransToP:false
+
         //语言配置项,默认是zh-cn。有需要的话也可以使用如下这样的方式来自动多语言切换，当然，前提条件是lang文件夹下存在对应的语言文件：
         //lang值也可以通过自动获取 (navigator.language||navigator.browserLanguage ||navigator.userLanguage).toLowerCase()
         //,lang:"zh-cn"

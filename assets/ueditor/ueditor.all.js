@@ -9413,7 +9413,6 @@ var htmlparser = UE.htmlparser = function (htmlstr,ignoreBlank) {
             tmpNode.appendChild(uNode.createText(data));
             parent = tmpNode;
         }else{
-
             parent.appendChild(uNode.createText(data));
         }
     }
@@ -9947,7 +9946,7 @@ var LocalStorage = UE.LocalStorage = (function () {
 UE.plugins['defaultfilter'] = function () {
     var me = this;
     me.setOpt({
-        'allowDivTransToP':true,
+        'allowDivTransToP':false,
         'disabledTableInTable':true
     });
     //默认的过滤处理
@@ -12004,17 +12003,22 @@ UE.plugins['audio'] = function (){
 
     // 内容填入后初始化音频控件
     me.addListener("afterSetContent", function() {
-        var audioArr = me.document.getElementsByTagName('audio');
-        if(audioArr) {
-            $.each(audioArr, function(i, a) {
-                var aDiv = domUtils.findParent(a, function(node) {
-                    return node.className === 'audio-wrapper';
-                });
-                if(aDiv) {
-                    initAudioEvent(aDiv);
-                }
-            });
+        var audioArr = me.document.querySelectorAll('.audio-wrapper');
+        if(audioArr){
+            for(var i=0;i<audioArr.length;i++){
+                initAudioEvent(audioArr[i]);
+            }
         }
+        // if(audioArr) {
+        //     audioArr.forEach(function(a,i) {
+        //         var aDiv = domUtils.findParent(a, function(node) {
+        //             return node.className === 'audio-wrapper';
+        //         });
+        //         if(aDiv) {
+        //             initAudioEvent(aDiv);
+        //         }
+        //     });
+        // }
     });
 
     /**
@@ -13488,31 +13492,71 @@ UE.plugins['insertcode'] = function() {
         utils.cssRule('pre','pre{margin:.5em 0;padding:.4em .6em;border-radius:8px;background:#f8f8f8;}',
             me.document)
     });
+    /*SyntaxHighlighter*/
+    // me.setOpt('insertcode',{
+    //         'as3':'ActionScript3',
+    //         'bash':'Bash/Shell',
+    //         'cpp':'C/C++',
+    //         'css':'Css',
+    //         'cf':'CodeFunction',
+    //         'c#':'C#',
+    //         'delphi':'Delphi',
+    //         'diff':'Diff',
+    //         'erlang':'Erlang',
+    //         'groovy':'Groovy',
+    //         'html':'Html',
+    //         'java':'Java',
+    //         'jfx':'JavaFx',
+    //         'js':'Javascript',
+    //         'pl':'Perl',
+    //         'php':'Php',
+    //         'plain':'Plain Text',
+    //         'ps':'PowerShell',
+    //         'python':'Python',
+    //         'ruby':'Ruby',
+    //         'scala':'Scala',
+    //         'sql':'Sql',
+    //         'vb':'Vb',
+    //         'xml':'Xml'
+    // });
+    /*hightlight*/
+    // me.setOpt('insertcode',{
+    //     Bash: "Bash",
+    //     CSharp: "C#",
+    //     Cpp: "C++",
+    //     CSS: "CSS",
+    //     HTML: "HTML, XML",
+    //     HTTP: "HTTP",
+    //     Ini: "Ini, TOML",
+    //     JSON: "JSON",
+    //     Java: "Java",
+    //     JavaScript: "JavaScript",
+    //     Makefile: "Makefile",
+    //     Markdown: "Markdown",
+    //     Nginx: "Nginx",
+    //     "Objective-C": "Objective-C",
+    //     PHP: "PHP",
+    //     Perl: "Perl",
+    //     Python: "Python",
+    //     Ruby: "Ruby",
+    //     SQL: "SQL",
+    //     Shell: "Shell",
+    //     Session: "Session"
+    // });
+    /*prism*/
     me.setOpt('insertcode',{
-            'as3':'ActionScript3',
-            'bash':'Bash/Shell',
-            'cpp':'C/C++',
-            'css':'Css',
-            'cf':'CodeFunction',
-            'c#':'C#',
-            'delphi':'Delphi',
-            'diff':'Diff',
-            'erlang':'Erlang',
-            'groovy':'Groovy',
-            'html':'Html',
-            'java':'Java',
-            'jfx':'JavaFx',
-            'js':'Javascript',
-            'pl':'Perl',
-            'php':'Php',
-            'plain':'Plain Text',
-            'ps':'PowerShell',
-            'python':'Python',
-            'ruby':'Ruby',
-            'scala':'Scala',
-            'sql':'Sql',
-            'vb':'Vb',
-            'xml':'Xml'
+        asp:"ASP",
+        aspx:"ASPX",
+        c:"C",
+        cc:"C#",
+        cpp:"C++",
+        css:"CSS",
+        html:"HTML",
+        java:"JAVA",
+        js:"JS",
+        php:"PHP",
+        rb:"Ruby",
+        xml:"XML"
     });
 
     /**
@@ -13543,9 +13587,14 @@ UE.plugins['insertcode'] = function() {
         execCommand : function(cmd,lang){
             var me = this,
                 rng = me.selection.getRange(),
-                pre = domUtils.findParentByTagName(rng.startContainer,'pre',true);
+                // pre = domUtils.findParentByTagName(rng.startContainer,'pre',true);
+                pre = domUtils.findParentByTagName(rng.startContainer, "code", true);
+
+                preClassName = 'line-numbers language-'+lang;
             if(pre){
-                pre.className = 'brush:'+lang+';toolbar:false;';
+                // pre.className = 'brush:'+lang+';toolbar:false;';
+                pre.className = lang;
+                // pre.className = preClassName;
             }else{
                 var code = '';
                 if(rng.collapsed){
@@ -13625,7 +13674,9 @@ UE.plugins['insertcode'] = function() {
 
                     });
                 }
-                me.execCommand('inserthtml','<pre id="coder"class="brush:'+lang+';toolbar:false">'+code+'</pre>',true);
+                // me.execCommand('inserthtml','<pre id="coder"class="brush:'+lang+';toolbar:false">'+code+'</pre>',true);
+                //me.execCommand("inserthtml",'<pre><code id="coder" class="' + lang + '">' + code + "</code></pre>",true);
+                me.execCommand("inserthtml",'<pre><code id="coder" class="' + preClassName + '">' + code + "</code></pre>",true);
 
                 pre = me.document.getElementById('coder');
                 domUtils.removeAttributes(pre,'id');
@@ -13650,9 +13701,13 @@ UE.plugins['insertcode'] = function() {
             var path = this.selection.getStartElementPath();
             var lang = '';
             utils.each(path,function(node){
-                if(node.nodeName =='PRE'){
-                    var match = node.className.match(/brush:([^;]+)/);
-                    lang = match && match[1] ? match[1] : '';
+                // if(node.nodeName =='PRE'){
+                //     var match = node.className.match(/brush:([^;]+)/);
+                //     lang = match && match[1] ? match[1] : '';
+                //     return false;
+                // }
+                if (node.nodeName == "CODE") {
+                    lang = node.className;
                     return false;
                 }
             });
@@ -13661,7 +13716,8 @@ UE.plugins['insertcode'] = function() {
     };
 
     me.addInputRule(function(root){
-       utils.each(root.getNodesByTagName('pre'),function(pre){
+    //    utils.each(root.getNodesByTagName('pre'),function(pre){
+        utils.each(root.getNodesByTagName("code"), function(pre) {
            var brs = pre.getNodesByTagName('br');
            if(brs.length){
                browser.ie && browser.ie11below && browser.version > 8 && utils.each(brs,function(br){
@@ -13684,7 +13740,8 @@ UE.plugins['insertcode'] = function() {
        })
     });
     me.addOutputRule(function(root){
-        utils.each(root.getNodesByTagName('pre'),function(pre){
+        // utils.each(root.getNodesByTagName('pre'),function(pre){
+        utils.each(root.getNodesByTagName("code"), function(pre) {
             var code = '';
             utils.each(pre.children,function(n){
                if(n.type == 'text'){
@@ -13733,7 +13790,8 @@ UE.plugins['insertcode'] = function() {
     };
     me.addListener('beforeenterkeydown',function(){
         var rng = me.selection.getRange();
-        var pre = domUtils.findParentByTagName(rng.startContainer,'pre',true);
+        // var pre = domUtils.findParentByTagName(rng.startContainer,'pre',true);
+        var pre = domUtils.findParentByTagName(rng.startContainer, "code", true);
         if(pre){
             me.fireEvent('saveScene');
             if(!rng.collapsed){
@@ -13845,7 +13903,8 @@ UE.plugins['insertcode'] = function() {
 
     me.addListener('tabkeydown',function(cmd,evt){
         var rng = me.selection.getRange();
-        var pre = domUtils.findParentByTagName(rng.startContainer,'pre',true);
+        // var pre = domUtils.findParentByTagName(rng.startContainer,'pre',true);
+        var pre = domUtils.findParentByTagName(rng.startContainer, "code", true);
         if(pre){
             me.fireEvent('saveScene');
             if(evt.shiftKey){
@@ -13903,7 +13962,8 @@ UE.plugins['insertcode'] = function() {
     me.addListener('beforeinserthtml',function(evtName,html){
         var me = this,
             rng = me.selection.getRange(),
-            pre = domUtils.findParentByTagName(rng.startContainer,'pre',true);
+            // pre = domUtils.findParentByTagName(rng.startContainer,'pre',true);
+            pre = domUtils.findParentByTagName(rng.startContainer, "code", true);
         if(pre){
             if(!rng.collapsed){
                 rng.deleteContents()
@@ -13987,7 +14047,8 @@ UE.plugins['insertcode'] = function() {
         var me = this,keyCode = evt.keyCode || evt.which;
         if(keyCode == 40){
             var rng = me.selection.getRange(),pre,start = rng.startContainer;
-            if(rng.collapsed && (pre = domUtils.findParentByTagName(rng.startContainer,'pre',true)) && !pre.nextSibling){
+            // if(rng.collapsed && (pre = domUtils.findParentByTagName(rng.startContainer,'pre',true)) && !pre.nextSibling){
+            if(rng.collapsed && (pre = domUtils.findParentByTagName(rng.startContainer,'code',true)) && !pre.nextSibling){
                 var last = pre.lastChild
                 while(last && last.nodeName == 'BR'){
                     last = last.previousSibling;
@@ -14005,7 +14066,8 @@ UE.plugins['insertcode'] = function() {
         var rng = this.selection.getRange();
         rng.txtToElmBoundary(true);
         var start = rng.startContainer;
-        if(domUtils.isTagNode(start,'pre') && rng.collapsed && domUtils.isStartInblock(rng)){
+        // if(domUtils.isTagNode(start,'pre') && rng.collapsed && domUtils.isStartInblock(rng)){
+        if(domUtils.isTagNode(start,'code') && rng.collapsed && domUtils.isStartInblock(rng)){
             var p = me.document.createElement('p');
             domUtils.fillNode(me.document,p);
             start.parentNode.insertBefore(p,start);
@@ -15001,7 +15063,7 @@ UE.plugins['paste'] = function () {
                     // if (domUtils.isEmptyBlock(node)) {
                     //     domUtils.remove(node,true)
                     // }
-                    if (domUtils.isEmptyBlock(node) && node.className != 'progress-bar-bg' && node.className != 'progressBar') {
+                    if (domUtils.isEmptyBlock(node) && !(["audio-wrapper","audio-left","audio-right","progress-bar-bg","progress-bar","audio-time"].includes(node.className))) {
                         domUtils.remove(node,true)
                     }
                 })
@@ -16648,7 +16710,8 @@ UE.plugins['list'] = function () {
                                     }
                                 };
                                 break;
-                                case 'pre':
+                                // case 'pre':
+                                case 'code':
                                     node.innerText(node.innerText().replace(/&nbsp;/g,' '))
 
                             }
@@ -16783,9 +16846,8 @@ UE.plugins['list'] = function () {
                     tag : "link",
                     rel : "stylesheet",
                     type : "text/css",
-                    href : opt.codeMirrorCssUrl || opt.UEDITOR_HOME_URL + "third-party/codemirror/codemirror.css"
+                    href : opt.codeMirrorCssUrl || opt.UEDITOR_HOME_URL + "third-party/codemirror/codemirror.dark.css"
                 });
-
             });
         }
 
