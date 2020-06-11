@@ -141,11 +141,11 @@ class Ueditor
                     }
                 }
 
-                $result = json_encode([
+                $result = [
                     'state'     => count($list) ? 'SUCCESS' : 'ERROR',
                     'list'      => $list,
                     'fail_list' => $failList,
-                ]);
+                ];
                 break;
 
             default:
