@@ -77,6 +77,9 @@ function path_fmt($path)
  */
 function check_uid()
 {
+    if (env('app_debug')) {
+        return true;
+    }
     $config = new \bingher\ueditor\config\UeConfig();
     $uid    = $config->get('session_uid_key', 'uid');
     if (session($uid)) {
