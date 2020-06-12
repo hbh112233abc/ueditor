@@ -1,7 +1,7 @@
 <?php
 
-use think\migration\Migrator;
 use think\migration\db\Column;
+use think\migration\Migrator;
 
 class BingherUeditorInit extends Migrator
 {
@@ -57,6 +57,7 @@ class BingherUeditorInit extends Migrator
             ['name' => 'filesystem_type', 'value' => 'local', 'group' => 'base', 'remark' => '上传文件系统类型'],
             ['name' => 'filesystem_root', 'value' => './upload', 'group' => 'base', 'remark' => '上传文件系统存储路径'],
             ['name' => 'filesystem_url', 'value' => '/upload', 'group' => 'base', 'remark' => '上传文件系统访问路径'],
+            ['name' => 'auth_control', 'value' => 'check_uid', 'group' => 'base', 'remark' => '权限控制函数'],
         ];
 
         $this->table($this->tableName)->insert($rows)->save();

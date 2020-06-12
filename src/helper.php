@@ -70,3 +70,17 @@ function path_fmt($path)
     $path = str_replace('\\', '/', $path);
     return $path;
 }
+
+/**
+ * 验证session中是否有uid
+ * @return bool 验证结果
+ */
+function check_uid()
+{
+    $config = new \bingher\ueditor\config\UeConfig();
+    $uid    = $config->get('session_uid_key', 'uid');
+    if (session($uid)) {
+        return true;
+    }
+    return false;
+}

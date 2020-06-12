@@ -5,14 +5,13 @@ namespace bingher\ueditor\controller;
 use bingher\ueditor\config\UeConfig;
 use bingher\ueditor\validate\UeditorValidate;
 use FormBuilder\Factory\Elm;
-use FormBuilder\Form;
 use think\facade\Db;
 use think\Image;
 
 /**
  * ueditor配置项数据库设置
  */
-class Setting
+class Setting extends Base
 {
     /**
      * 展示表单
