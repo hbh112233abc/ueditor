@@ -443,6 +443,33 @@ UE.parse.register("insertcode", function(utils) {
     }
 });
 
+UE.parse.register("audio", function(utils) {
+    var audio = this.root.querySelectorAll(".audio-wrapper");
+    if (audio.length) {
+        var jsurl, cssurl;
+        if (this.rootPath !== undefined) {
+            jsurl = utils.removeLastbs(this.rootPath) + "/third-party/H5-audio/js/audio.js";
+            cssurl = utils.removeLastbs(this.rootPath) + "/third-party/H5-audio/css/audio.css";
+        } else {
+            jsurl = this.highlightJsUrl;
+            cssurl = this.highlightCssUrl;
+        }
+        // utils.loadFile(document, {
+        //     id: "audio_css",
+        //     tag: "link",
+        //     rel: "stylesheet",
+        //     type: "text/css",
+        //     href: cssurl
+        // });
+        utils.loadFile(document, {
+            id: "audio_js",
+            src: jsurl,
+            tag: "script",
+            type: "text/javascript"
+        });
+    }
+});
+
 UE.parse.register('table', function (utils) {
     var me = this,
         root = this.root,

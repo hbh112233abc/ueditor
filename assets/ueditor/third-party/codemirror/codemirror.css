@@ -1,0 +1,106 @@
+.CodeMirror {
+    line-height: 1em;
+    font-family: monospace;
+    background-color: #3f3f3f;
+    color: #dcdccc;
+}
+
+.CodeMirror-scroll {
+    overflow: auto;
+    height: 300px;
+    /* This is needed to prevent an IE[67] bug where the scrolled content
+       is visible outside of the scrolling box. */
+    position: relative;
+}
+
+.CodeMirror-gutter {
+    position: absolute; left: 0; top: 0;
+    z-index: 10;
+    background-color: #3f3f3f;
+    border-right: 1px solid #eee;
+    min-width: 2em;
+    height: 100%;
+}
+.CodeMirror-gutter-text {
+    color: #aaa;
+    text-align: right;
+    padding: .4em .2em .4em .4em;
+    white-space: pre !important;
+}
+.CodeMirror-lines {
+    padding: .4em;
+}
+
+.CodeMirror pre {
+    -moz-border-radius: 0;
+    -webkit-border-radius: 0;
+    -o-border-radius: 0;
+    border-radius: 0;
+    border-width: 0; margin: 0; padding: 0; background: transparent;
+    font-family: inherit;
+    font-size: inherit;
+    padding: 0; margin: 0;
+    white-space: pre;
+    word-wrap: normal;
+}
+
+.CodeMirror-wrap pre {
+    word-wrap: break-word;
+    white-space: pre-wrap;
+}
+.CodeMirror-wrap .CodeMirror-scroll {
+    overflow-x: hidden;
+}
+
+.CodeMirror textarea {
+    outline: none !important;
+}
+
+.CodeMirror pre.CodeMirror-cursor {
+    z-index: 10;
+    position: absolute;
+    visibility: hidden;
+    border-left: 1px solid white;
+}
+.CodeMirror-focused pre.CodeMirror-cursor {
+    visibility: visible;
+}
+
+span.CodeMirror-selected { background: #545454;  }
+.CodeMirror-focused span.CodeMirror-selected { background: #4f4f4f; }
+
+.CodeMirror-searching {background: #ffa;}
+
+/* Default theme */
+
+.cm-s-default span.cm-keyword {color: #f0dfaf; font-weight: bold;}
+.cm-s-default span.cm-atom {color: #bfebbf; }
+.cm-s-default span.cm-number {color: #dcdccc;}
+.cm-s-default span.cm-def {color: #dcdccc;}
+.cm-s-default span.cm-variable {color: #dfaf8f;}
+.cm-s-default span.cm-variable-2 {color: #dcdccc;}
+.cm-s-default span.cm-variable-3 {color: #085;}
+.cm-s-default span.cm-property {color: #dfaf8f;}
+.cm-s-default span.cm-operator {color: #f0efd0;}
+.cm-s-default span.cm-comment {color: #7f9f7f;}
+.cm-s-default span.cm-string {color: #cc9393;}
+.cm-s-default span.cm-string-2 {color: #cc9393; }
+.cm-s-default span.cm-meta {color: #f0dfaf;}
+.cm-s-default span.cm-error {color: #f00;}
+.cm-s-default span.cm-qualifier {color: #7cb8bb;}
+.cm-s-default span.cm-builtin {color: #dcdccc; font-weight: bold;}
+.cm-s-default span.cm-bracket {box-sizing: border-box; background: transparent; border-bottom: 1px solid;}
+.cm-s-default span.cm-tag {color: #93e0e3; }
+.cm-s-default span.cm-attribute {color: #dfaf8f;}
+.cm-s-default span.cm-header {color: #f0efd0;}
+.cm-s-default span.cm-quote {color: #090;}
+.cm-s-default span.cm-hr {color: #999;}
+.cm-s-default span.cm-link {color: #00c;}
+
+span.cm-header, span.cm-strong {font-weight: bold;}
+span.cm-em {font-style: italic;}
+span.cm-emstrong {font-style: italic; font-weight: bold;}
+span.cm-link {text-decoration: underline;}
+
+div.CodeMirror span.CodeMirror-matchingbracket {box-sizing: border-box; background: transparent; border-bottom: 1px solid;}
+div.CodeMirror span.CodeMirror-nonmatchingbracket {border-bottom: 1px solid; background: none;}

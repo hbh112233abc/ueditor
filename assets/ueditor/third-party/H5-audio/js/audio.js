@@ -1,6 +1,10 @@
-document.addEventListener('DOMContentLoaded', function () {
+// document.addEventListener('DOMContentLoaded', function () {
+//     initAudio();
+// }, false);
+
+window.onload = function(){
     initAudio();
-}, false);
+}
 
 function initAudio(){
     // 设置音频文件名显示宽度
@@ -11,7 +15,6 @@ function initAudio(){
 
     // 初始化音频控制事件
     var audioList = document.querySelectorAll('.audio-wrapper');
-    console.log(audioList);
     audioList.forEach(function(e,i){
         initAudioEvent(e);
     })

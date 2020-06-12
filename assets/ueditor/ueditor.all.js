@@ -8072,6 +8072,9 @@ UE.Editor.defaultOptions = function(editor){
                     'onsuccess':function(r){
                         try {
                             var config = isJsonp ? r:eval("("+r.responseText+")");
+                            if(config.code == 0){
+                                return alert('ueditor config:'+config.state);
+                            }
                             utils.extend(me.options, config);
                             me.fireEvent('serverConfigLoaded');
                             me._serverConfigLoaded = true;
@@ -11997,9 +12000,9 @@ UE.plugins['insertframe'] = function() {
 UE.plugins['audio'] = function (){
     var me = this;
     // 从publis.js中获取的静态文件路径，需自行修改设置
-    var staticpath = me.options.UEDITOR_HOME_URL + 'themes/default/';
-    var playicon = staticpath + 'images/play.png';
-    var pauseicon = staticpath + 'images/pause.png';
+    var staticpath = me.options.UEDITOR_HOME_URL + 'third-party/H5-audio/image/';
+    var playicon = staticpath + 'play.png';
+    var pauseicon = staticpath + 'pause.png';
 
     // 内容填入后初始化音频控件
     me.addListener("afterSetContent", function() {
@@ -12009,16 +12012,6 @@ UE.plugins['audio'] = function (){
                 initAudioEvent(audioArr[i]);
             }
         }
-        // if(audioArr) {
-        //     audioArr.forEach(function(a,i) {
-        //         var aDiv = domUtils.findParent(a, function(node) {
-        //             return node.className === 'audio-wrapper';
-        //         });
-        //         if(aDiv) {
-        //             initAudioEvent(aDiv);
-        //         }
-        //     });
-        // }
     });
 
     /**
