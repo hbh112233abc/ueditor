@@ -20,6 +20,9 @@ class Setting extends Base
      */
     public function index()
     {
+        if(!$this->tableExists()){
+            return '配置信息表不存在!';
+        }
         $config = Db::table('ueditor_config')->column('value,remark', 'name');
         $input  = [
             Elm::number('max_image_size', '上传图片限制', $config['max_image_size']['value'])->min(10240)->max(512000000)->step(10240)->info($config['max_image_size']['remark']),
@@ -105,6 +108,18 @@ class Setting extends Base
         }
         cache('ueditor_config', null);
         return json(['code' => 200, 'msg' => '更新成功']);
+    }
+
+    /**
+     * 判断数据表是否存在
+     *
+     * @param string $tableName
+     * @return bool
+     */
+    protected function tableExists(string $tableName='ueditor_config')
+    {
+        $res = Db::query('show tables like "'.$tableName.'";');
+        return !empty($res);
     }
 
     /**
