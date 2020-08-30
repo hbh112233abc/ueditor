@@ -37,11 +37,11 @@
             ['fullscreen','source', '|', 'undo', 'redo', '|',
             'bold', 'italic', 'underline', 'fontborder', 'strikethrough', 'superscript', 'subscript', 'removeformat', 'formatmatch', 'autotypeset', 'blockquote', 'pasteplain', '|', 'forecolor', 'backcolor', 'insertorderedlist', 'insertunorderedlist', 'selectall', 'cleardoc', '|',
             'rowspacingtop', 'rowspacingbottom', 'lineheight', '|',
-            'customstyle', 'paragraph', 'fontfamily', 'fontsize', '|',
+            'customstyle', 'paragraph', 'fontfamily',  'fontsize', '|',
             'directionalityltr', 'directionalityrtl', 'indent', '|',
             'justifyleft', 'justifycenter', 'justifyright', 'justifyjustify', '|', 'touppercase', 'tolowercase', '|',
             'link', 'unlink', 'anchor', '|', 'imagenone', 'imageleft', 'imageright', 'imagecenter', '|',
-            'simpleupload', 'insertimage', 'emotion', 'scrawl', 'insertvideo','insertaudio', 'music', 'attachment', 'map', 'gmap', 'insertframe', 'insertcode', 'pagebreak', 'template', 'background', '|',
+            'simpleupload', 'insertimage', 'emotion', 'scrawl', 'insertvideo', 'insertaudio', 'music', 'attachment', 'map', 'gmap', 'insertframe', 'insertcode', 'social','pagebreak', 'template', 'background', '|',
             'horizontal', 'date', 'time', 'spechars', 'snapscreen', 'wordimage', '|',
             'inserttable', 'deletetable', 'insertparagraphbeforetable', 'insertrow', 'deleterow', 'insertcol', 'deletecol', 'mergecells', 'mergeright', 'mergedown', 'splittocells', 'splittorows', 'splittocols', 'charts', '|',
             'print', 'preview', 'searchreplace', 'help', 'drafts'
@@ -55,7 +55,37 @@
             'anchor' : '',
             'vaecolor' : '自定义字体颜色',
             'insertaudio' : '音频',
+            'social' : '社交账号',
         }
+
+        //社交账号
+        // ,social: [{
+        //         label: '昵称',
+        //         value: 'hbh',
+        //         type: 'text'
+        //     },
+        //     {
+        //         label: '微信',
+        //         value: 'huangbinghe',
+        //         type: 'text'
+        //     },
+        //     {
+        //         label: '手机号',
+        //         value: '13950804693',
+        //         type: 'tel'
+        //     },
+        //     {
+        //         label: '邮箱',
+        //         value: 'hbh112233abc@163.com',
+        //         type: 'mail'
+        //     },
+        //     {
+        //         label: '二维码',
+        //         value: 'https://p.ssl.qhimg.com/d/inn/0444533a/Snip20160525_6.png',
+        //         type: 'img',
+        //         style: "width:50px;height:50px"
+        //     },
+        // ]
 
         //禁用div转p标签
         ,allowDivTransToP:false

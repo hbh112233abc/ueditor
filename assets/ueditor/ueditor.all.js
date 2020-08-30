@@ -28804,6 +28804,38 @@ UE.ui = baidu.editor.ui = {};
         return ui;
     };
 
+    editorui.social = function (editor,list,title) {
+        title = editor.options.labelMap['social'] || editor.getLang("labelMap.social") || '';
+        list = list || editor.options['social'] || [];
+        if (!list.length) return;
+        var ui = new editorui.Combox({
+            editor: editor,
+            items: list,
+            title: title,
+            initValue: title,
+            onselect: function (t, index) {
+                editor.execCommand('social', this.items[index]);
+            },
+            onbuttonclick: function () {
+                this.showPopup();
+            }
+        });
+        editorui.buttons['social'] = ui;
+        editor.addListener('selectionchange', function (type, causeByUi, uiReady) {
+            if (!uiReady) {
+                var state = editor.queryCommandState('social');
+                if (state == -1) {
+                    ui.setDisabled(true);
+                } else {
+                    ui.setDisabled(false);
+                    ui.setValue(editor.queryCommandValue('social'));
+                }
+            }
+
+        });
+        return ui;
+    };
+
     editorui.paragraph = function (editor, list, title) {
         title = editor.options.labelMap['paragraph'] || editor.getLang("labelMap.paragraph") || '';
         list = editor.options['paragraph'] || [];
@@ -30098,6 +30130,65 @@ UE.registerUI('autosave', function(editor) {
 
 });
 
+/**
+ * 社交标签
+ * 用于插入社交相关账号信息
+ */
+UE.plugins['social'] = function(){ 
+    var me=this;  
+    me.setOpt('social',[
+        {label:'昵称',value:'hbh',type:'text'},
+        {label:'微信',value:'huangbinghe',type:'text'},
+        {label:'手机号',value:'1875920xx63',type:'tel'},
+        {label:'邮箱',value:'hbh112233abc@163.com',type:'mail'},
+        {label:'二维码',value:'https://p.ssl.qhimg.com/d/inn/0444533a/Snip20160525_6.png',type:'img'},
+    ]);
+    //注册鼠标和键盘事件  
+    me.addListener('mousedown',function(){}); 
+    me.addListener('keydown',function(type,evt){}); 
+    me.addListener('mouseup',function(){}); 
+
+    me.commands['social'] = {
+        //查询当前命令状态  
+        queryCommandState: function(cmdName){
+            // console.log('query cmd state:',cmdName);
+        },
+        //命令执行主体  
+        execCommand: function(cmdName,item){
+            // console.log(item);
+            var html = '<p>';
+            switch(item.type){
+                case 'text':
+                    html += '<span style="'+(item.style || '')+'">'+item.value+'</span>';
+                    break;
+                case 'url':
+                    html += '<a href="'+item.value+'" style="'+(item.style || '')+'">'+item.label+'</a>';
+                    break;
+                case 'tel':
+                    html += '<a href="tel:'+item.value+'" style="'+(item.style || '')+'">'+item.value+'</a>';
+                    break;
+                case 'sms':
+                    html += '<a href="sms:' + item.value + '" style="' + (item.style || '') + '">' + item.value + '</a>';
+                    break;
+                case 'mail':
+                    html += '<a href="mailto:' + item.value + '" style="' + (item.style || '') + '">' + item.value + '</a>';
+                    break;  
+                case 'img':
+                    html += '<img src="' + item.value + '" style="' + (item.style || '') + '">';
+                    break;
+                default:
+                    html += item.value;
+                    break;                  
+            }
+            html += '</p>';
+            me.execCommand('insertHtml',html);
+        },
+        //获取命令执行结果  
+        queryCommandValue: function(cmdName){
+            return me.options.labelMap['social'] || me.getLang("labelMap.social") || '社交账号';
+        }, 
+    }
+}; 
 
 
 })();

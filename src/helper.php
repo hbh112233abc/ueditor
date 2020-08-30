@@ -1,5 +1,8 @@
 <?php
 
+define('UE_VERSION', '1.2.0');
+$jsStart = false;
+
 /**
  * 页面中引入ueditor
  * 例: {:ue_view()}
@@ -10,6 +13,7 @@
  */
 function ue_view(string $name = 'ueditor', string $content = '', array $config = [])
 {
+    global $jsStart;
     $default = [
         "serverUrl"          => '/ueditor/index',
         "UEDITOR_HOME_URL"   => '/static/bingher/ueditor/',
@@ -20,17 +24,34 @@ function ue_view(string $name = 'ueditor', string $content = '', array $config =
     ];
     $config     = array_merge($default, $config);
     $configJson = json_encode($config);
-    $result     = <<<tpl
+    $result = '';
+    if (!$jsStart) {
+        $result .= ue_js();
+    }
+    $result     .= <<<tpl
 <script id="{$name}" name="{$name}" type="text/plain"></script>
-<!-- 引入ueditor的js代码 -->
-<script src="/static/bingher/ueditor/ueditor.config.js"></script>
-<script src="/static/bingher/ueditor/ueditor.all.js"></script>
 <script>
     //ueditor代码
     var ue = UE.getEditor("{$name}",{$configJson});
 </script>
 tpl;
     return $result;
+}
+
+/**
+ * 引入js
+ *
+ * @param string $version 版本号
+ * @return string
+ */
+function ue_js(string $version = ''): string
+{
+    global $jsStart;
+    $version = empty($version) ? UE_VERSION : $version;
+    $jsStart = true;
+    return '<!-- 引入ueditor的js代码 -->
+<script src="/static/bingher/ueditor/ueditor.config.js?v=' . $version . '"></script>
+<script src="/static/bingher/ueditor/ueditor.all.min.js?v=' . $version . '"></script>';
 }
 
 /**
