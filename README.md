@@ -40,6 +40,8 @@ php think migrate:run
     'upload_field_name' => 'upfile',
     //用户session账号i
     'session_uid_key' => 'uid',
+    //权限控制函数
+    'auth_control'           => 'check_uid',
     //超级管理员uid
     'super_admin_uid' => 'admin',
     //磁盘类型
@@ -69,6 +71,9 @@ function ue_view(string $name = 'ueditor',string $content = '',array $config = [
 |$name|生成的插件id及表单提交字段name,默认ueditor,同一个页面需要多个ueditor,需要分别设定|
 |$content|初始化内容,在需要编辑的时候传入编辑文本内容|
 |$config|配置项,参考ueditor.config.js|
+
+> 注意事项
+关闭`APP_DEBUG`(生产环境)后,默认会验证session(`session_uid_key`)是否有值,如果配置你的系统不是存储session('uid'),请自行配置对应的用于验证权限的键名,默认验证方法是`check_uid`,可以更改配置`auth_control`为验证权限的方法即可(注意bool类型的返回)
 
 ## DEMO
 #### ue_view
