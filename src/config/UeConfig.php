@@ -3,8 +3,8 @@
 namespace bingher\ueditor\config;
 
 use think\facade\Config;
-use think\facade\Filesystem;
 use think\facade\Db;
+use think\facade\Filesystem;
 
 /**
  * 配置信息
@@ -13,10 +13,10 @@ class UeConfig
 {
     protected $config;
     protected $ueditor;
-    function __construct($config = [])
+    public function __construct($config = [])
     {
         try {
-            $userConfig = Db::table('ueditor_config')->cache('ueditor_config')->column('value', 'name');
+            $userConfig = Db::table('ueditor_config')->cache('ueditor_config', 600)->column('value', 'name');
         } catch (\Throwable $th) {
             $userConfig = Config::get('ueditor', []);
         }
@@ -27,8 +27,8 @@ class UeConfig
         $this->config = $userConfig;
         $this->config = array_merge($this->config, $userConfig);
 
-        $this->ueditor = require __DIR__ . '/ueditor.php';
-        $this->ueditor['imageMaxSize'] = $this->ueditor['scrawlMaxSize'] = $this->ueditor['catcherMaxSize'] = $this->config['max_image_size'];
+        $this->ueditor                   = require __DIR__ . '/ueditor.php';
+        $this->ueditor['imageMaxSize']   = $this->ueditor['scrawlMaxSize']   = $this->ueditor['catcherMaxSize']   = $this->config['max_image_size'];
         $this->ueditor['imageFieldName'] = $this->ueditor['scrawlFieldName'] = $this->ueditor['catcherFieldName'] = $this->ueditor['videoFieldName'] = $this->ueditor['fileFieldName'] = $this->config['upload_field_name'];
 
         $this->config = array_merge($this->ueditor, $this->config);
@@ -86,8 +86,8 @@ class UeConfig
             }
         }
 
-        $name    = explode('.', $name);
-        $config  = $this->config;
+        $name   = explode('.', $name);
+        $config = $this->config;
 
         // 按.拆分成多维数组进行判断
         foreach ($name as $val) {
