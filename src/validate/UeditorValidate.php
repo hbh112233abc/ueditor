@@ -7,21 +7,21 @@ use think\Validate;
 class UeditorValidate extends Validate
 {
     protected $rule = [
-        'max_image_size|上传图片限制' => 'require|number|between:10240,512000000',
-        'max_vedio_size|上传视频限制' => 'require|number|between:10240,5120000000',
-        'max_file_size|上传文件限制' => 'require|number|between:10240,512000000',
-        'thumb_type|缩略图类型' => 'require|between:0,6',
-        'thumb_image_quality|缩略图质量' => 'requireCallback:with_thumb|between:50,100',
+        'max_image_size|上传图片限制'          => 'require|number|between:10240,512000000',
+        'max_vedio_size|上传视频限制'          => 'require|number|between:10240,5120000000',
+        'max_file_size|上传文件限制'           => 'require|number|between:10240,512000000',
+        'thumb_type|缩略图类型'               => 'require|between:0,6',
+        'thumb_image_quality|缩略图质量'      => 'requireCallback:with_thumb|between:50,100',
         'thumb_max_width_height|缩略图最大宽高' => 'requireCallback:with_thumb|number',
-        'water|水印类型' => 'require|between:0,2',
-        'water_position|水印位置' => 'requireCallback:with_water|between:1,9',
-        'water_text|水印文字' => 'requireCallback:with_water_text',
-        'water_image|水印图片' => 'requireCallback:with_water_image',
-        'session_uid_key' => 'require',
-        'super_admin_uid' => 'require',
-        'filesystem_type|文件系统存储类型' => 'require|check_fs_type',
-        'filesystem_root|文件系统存储路径' => 'require|check_fs_root',
-        'filesystem_url|文件系统访问路径' => 'require',
+        'water|水印类型'                     => 'require|between:0,2',
+        'water_position|水印位置'            => 'requireCallback:with_water|between:1,9',
+        'water_text|水印文字'                => 'requireCallback:with_water_text',
+        'water_image|水印图片'               => 'requireCallback:with_water_image',
+        'session_uid_key'                => 'require',
+        'super_admin_uid'                => 'require',
+        'filesystem_type|文件系统存储类型'       => 'require|check_fs_type:local',
+        'filesystem_root|文件系统存储路径'       => 'require|check_fs_root',
+        'filesystem_url|文件系统访问路径'        => 'require',
     ];
 
     /**
