@@ -37,8 +37,8 @@
             ['fullscreen','source', '|', 'undo', 'redo', '|',
             'bold', 'italic', 'underline', 'fontborder', 'strikethrough', 'superscript', 'subscript', 'removeformat', 'formatmatch', 'autotypeset', 'blockquote', 'pasteplain', '|', 'forecolor', 'backcolor', 'insertorderedlist', 'insertunorderedlist', 'selectall', 'cleardoc', '|',
             'rowspacingtop', 'rowspacingbottom', 'lineheight', '|',
-            'customstyle', 'paragraph', 'fontfamily',  'fontsize', '|',
-            'directionalityltr', 'directionalityrtl', 'indent', '|',
+            'customstyle', 'paragraph', 'fontfamily',  'fontsize',  '|',
+            'heti','directionalityltr', 'directionalityrtl', 'indent', '|',
             'justifyleft', 'justifycenter', 'justifyright', 'justifyjustify', '|', 'touppercase', 'tolowercase', '|',
             'link', 'unlink', 'anchor', '|', 'imagenone', 'imageleft', 'imageright', 'imagecenter', '|',
             'simpleupload', 'insertimage', 'emotion', 'scrawl', 'insertvideo', 'insertaudio', 'music', 'attachment', 'map', 'gmap', 'insertframe', 'insertcode', 'social','pagebreak', 'template', 'background', '|',
@@ -56,6 +56,7 @@
             'vaecolor' : '自定义字体颜色',
             'insertaudio' : '音频',
             'social' : '社交账号',
+            'heti': '赫蹏中文排版美化'
         }
 
         //社交账号

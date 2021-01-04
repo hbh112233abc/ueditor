@@ -443,6 +443,31 @@ UE.parse.register("insertcode", function(utils) {
     }
 });
 
+UE.parse.register('heti',function(utils){
+  var heti = this.root.querySelectorAll('.heti');
+  if(heti.length < 1){
+    return;
+  }
+  var cssUrl = utils.removeLastbs(this.rootPath) + "/third-party/heti/heti.min.css";
+  utils.loadFile(document, {
+      id: "heti_css",
+      tag: "link",
+      rel: "stylesheet",
+      type: "text/css",
+      href: cssUrl
+  });
+  var jsUrl = utils.removeLastbs(this.rootPath) + '/third-party/heti/heti-addon.js';
+  utils.loadFile(document, {
+      id: "heti_js",
+      src: jsUrl,
+      tag: "script",
+      type: "text/javascript"
+  },function(){
+    const heti = new Heti('.heti');
+    heti.autoSpacing(); // 自动进行中西文混排美化和标点挤压
+  });
+})
+
 UE.parse.register("audio", function(utils) {
     var audio = this.root.querySelectorAll(".audio-wrapper");
     if (audio.length) {

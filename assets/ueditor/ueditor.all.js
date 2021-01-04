@@ -9384,6 +9384,7 @@ var htmlparser = UE.htmlparser = function (htmlstr,ignoreBlank) {
         b:1,code:1,i:1,u:1,strike:1,s:1,tt:1,strong:1,q:1,samp:1,em:1,span:1,
         sub:1,img:1,sup:1,font:1,big:1,small:1,iframe:1,a:1,br:1,pre:1
     };
+    // console.log(htmlstr);
     htmlstr = htmlstr.replace(new RegExp(domUtils.fillChar, 'g'), '');
     if(!ignoreBlank){
         htmlstr = htmlstr.replace(new RegExp('[\\r\\t\\n'+(ignoreBlank?'':' ')+']*<\/?(\\w+)\\s*(?:[^>]*)>[\\r\\t\\n'+(ignoreBlank?'':' ')+']*','g'), function(a,b){
@@ -12004,6 +12005,52 @@ UE.plugins['insertframe'] = function() {
 
 };
 
+/**
+ * 赫蹏排版美化
+ */
+UE.plugins['heti'] = function(){
+  var me = this;    
+  UE.commands["heti"] = {
+      execCommand: function (cmd) {             
+          var hetiDoms = me.document.querySelectorAll('.heti');
+          // var range = me.selection.getRange();
+          // var start = range.startContainer,end = range.endContainer;
+          if(hetiDoms.length < 1){
+            var content = me.getContent();
+            var root = document.createElement('article');
+            root.classList.add('heti');
+            root.innerHTML = content;
+            me.body.innerHTML = root.outerHTML;
+            console.log('heti on');
+            // range.setEndAfter( end );
+          }else{
+            var body = me.document.querySelector('.heti').innerHTML;
+            me.body.innerHTML = body;
+            console.log('heti off');
+          }
+
+          
+      },
+      queryCommandState:function(){
+        var hetiDoms = me.document.querySelectorAll('.heti');
+        var state = 0;
+        if (hetiDoms.length > 0){
+          state = 1;
+        }
+        console.log('heti state:',state);
+        return state;
+      }
+  };
+  
+  me.addListener("ready",function(){      
+      utils.loadFile(document,{
+          tag : "link",
+          rel : "stylesheet",
+          type : "text/css",
+          href : me.options.UEDITOR_HOME_URL + 'third-party/heti/heti.min.css'
+      });
+  });
+}
 
 /**
  * audio插件，为UEditor提供音频插入支持
@@ -28367,7 +28414,7 @@ UE.ui = baidu.editor.ui = {};
         'blockquote', 'pasteplain', 'pagebreak',
         'selectall', 'print','horizontal', 'removeformat', 'time', 'date', 'unlink',
         'insertparagraphbeforetable', 'insertrow', 'insertcol', 'mergeright', 'mergedown', 'deleterow',
-        'deletecol', 'splittorows', 'splittocols', 'splittocells', 'mergecells', 'deletetable', 'drafts','insertaudio'];
+        'deletecol', 'splittorows', 'splittocols', 'splittocells', 'mergecells', 'deletetable', 'drafts','insertaudio','heti'];
 
     for (var i = 0, ci; ci = btnCmds[i++];) {
         ci = ci.toLowerCase();
@@ -28835,7 +28882,7 @@ UE.ui = baidu.editor.ui = {};
         });
         return ui;
     };
-
+    
     editorui.paragraph = function (editor, list, title) {
         title = editor.options.labelMap['paragraph'] || editor.getLang("labelMap.paragraph") || '';
         list = editor.options['paragraph'] || [];

@@ -1916,3 +1916,7 @@ div.edui-box {
 .edui-default  .edui-for-insertaudio .edui-icon {
     background-image: url(../images/audio.png) !important;
 }
+
+.edui-default .edui-for-heti .edui-icon {
+  background-image:url(../images/heti.png) !important;
+}
