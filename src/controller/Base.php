@@ -3,17 +3,20 @@
 namespace bingher\ueditor\controller;
 
 use bingher\ueditor\config\UeConfig;
+use think\facade\Config;
 
 /**
  * 基础控制器
  */
 class Base
 {
-    protected $config = [];
+    protected $config    = [];
+    protected $tableName = 'ueditor_config';
 
     public function __construct()
     {
-        $this->config = new UeConfig();
+        $this->tableName = Config::get('ueditor.table_name', 'ueditor_config');
+        $this->config    = new UeConfig();
         if ($this->config->get('auth_control')) {
             if (!call_user_func($this->config->get('auth_control'))) {
                 throw new \think\exception\HttpResponseException($this->error('auth error'));

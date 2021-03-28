@@ -33,6 +33,8 @@ return [
     'filesystem_root'        => app()->getRootPath() . 'public/upload',
     //磁盘路径对应的外部URL路径
     'filesystem_url'         => '/upload',
-    //权限控制函数
+    //权限控制函数,如果为空或者为false表示不做权限控制
     'auth_control'           => 'check_uid',
+    //数据库配置表名称
+    'table_name'             => 'ueditor_config',
 ];

@@ -16,7 +16,9 @@ class UeConfig
     public function __construct($config = [])
     {
         try {
-            $userConfig = Db::table('ueditor_config')->cache('ueditor_config', 600)->column('value', 'name');
+            $tableName  = Config::get('ueditor.table_name', 'ueditor_config');
+            $userConfig = Db::table($tableName)->cache('ueditor_config', 600)
+                ->column('value', 'name');
         } catch (\Throwable $th) {
             $userConfig = Config::get('ueditor', []);
         }
@@ -25,9 +27,8 @@ class UeConfig
             $userConfig = array_merge($userConfig, $config);
         }
         $this->config = $userConfig;
-        $this->config = array_merge($this->config, $userConfig);
 
-        $this->ueditor                   = require __DIR__ . '/ueditor.php';
+        $this->ueditor                   = include_once __DIR__ . '/ueditor.php';
         $this->ueditor['imageMaxSize']   = $this->ueditor['scrawlMaxSize']   = $this->ueditor['catcherMaxSize']   = $this->config['max_image_size'];
         $this->ueditor['imageFieldName'] = $this->ueditor['scrawlFieldName'] = $this->ueditor['catcherFieldName'] = $this->ueditor['videoFieldName'] = $this->ueditor['fileFieldName'] = $this->config['upload_field_name'];
 
