@@ -3,7 +3,7 @@
 namespace bingher\ueditor;
 
 use bingher\ueditor\command\Publish;
-use bingher\ueditor\util\Recource;
+use bingher\ueditor\util\Resources;
 use think\Route;
 use think\Service;
 
@@ -24,7 +24,7 @@ class UeditorService extends Service
         $route->rule('ueditor/demo/view', "\\bingher\\ueditor\\controller\\Demo@view");
         $route->rule('ueditor/demo/setting', "\\bingher\\ueditor\\controller\\Demo@setting");
 
-        Recource::install(false); //检查资源文件
+        Resources::install(false); //检查资源文件
 
         $this->commands(['ueditor:publish' => Publish::class]);
     }

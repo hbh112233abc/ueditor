@@ -6,20 +6,20 @@ namespace bingher\ueditor\util;
  * 1. 安装更新时,复制assets/ueditor文件到/public/static/bingher/ueditor/
  * 2. 卸载时,删除/public/static/bingher/ueditor/,如果/public/static/bingher为空也一并删除了
  */
-class Recource
+class Resources
 {
     /**
      * 安装动作
      *
      * @return boolean
      */
-    static public function install($overWrite = true)
+    public static function install($overWrite = true)
     {
-        $assets = __DIR__.'/../../assets/ueditor/';
-        $static = root_path().'/public/static/bingher/ueditor/';
-        $res = FileUtil::copyDir($assets,$static,$overWrite);
+        $assets = __DIR__ . '/../../assets/ueditor/';
+        $static = root_path() . '/public/static/bingher/ueditor/';
+        $res    = FileUtil::copyDir($assets, $static, $overWrite);
 
-        if(!$res){
+        if (!$res) {
             throw new \Exception('资源安装失败');
         }
         return $res;
@@ -30,18 +30,18 @@ class Recource
      *
      * @return boolean
      */
-    static public function uninstall()
+    public static function uninstall()
     {
-        $parentDir = root_path().'/public/static/bingher/';
-        $ueditorDir = $parentDir.'ueditor/';
-        $res = FileUtil::unlinkDir($ueditorDir);
-        if($res){
-            if(FileUtil::isDirEmpty($parentDir)){
+        $parentDir  = root_path() . '/public/static/bingher/';
+        $ueditorDir = $parentDir . 'ueditor/';
+        $res        = FileUtil::unlinkDir($ueditorDir);
+        if ($res) {
+            if (FileUtil::isDirEmpty($parentDir)) {
                 $res = FileUtil::unlinkDir($parentDir);
             }
         }
-        if(!$res){
-            throw new \Exception('资源删除失败,请手动删除'.$ueditorDir);
+        if (!$res) {
+            throw new \Exception('资源删除失败,请手动删除' . $ueditorDir);
         }
         return $res;
     }
