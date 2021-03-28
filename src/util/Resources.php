@@ -11,9 +11,11 @@ class Resources
     /**
      * 安装动作
      *
+     * @param bool $overWrite 是否覆盖,默认:true
+     *
      * @return boolean
      */
-    public static function install($overWrite = true)
+    public static function install(bool $overWrite = true)
     {
         $assets = __DIR__ . '/../../assets/ueditor/';
         $static = root_path() . '/public/static/bingher/ueditor/';

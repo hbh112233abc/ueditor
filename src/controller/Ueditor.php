@@ -6,7 +6,7 @@ use think\facade\Request;
 use think\Image;
 
 /**
- * ueditor后端服务接口
+ * Ueditor后端服务接口
  */
 class Ueditor extends Base
 {
@@ -15,6 +15,11 @@ class Ueditor extends Base
     protected $upfile;
     protected $fs;
 
+    /**
+     * 构造函数
+     *
+     * @return self
+     */
     public function __construct()
     {
         parent::__construct();
@@ -47,7 +52,7 @@ class Ueditor extends Base
                     "maxSize"    => $this->config->get('imageMaxSize'),
                     "allowFiles" => $this->config->get('imageAllowFiles'),
                 ];
-                $result = $this->upFile($config);
+                $result = $this->_upFile($config);
                 break;
 
             /* 上传涂鸦 */
@@ -57,7 +62,7 @@ class Ueditor extends Base
                     "allowFiles" => $this->config->get('scrawlAllowFiles'),
                     "oriName"    => "scrawl.png",
                 ];
-                $result = $this->upBase64($config);
+                $result = $this->_upBase64($config);
                 break;
 
             /* 上传视频 */
@@ -66,7 +71,7 @@ class Ueditor extends Base
                     "maxSize"    => $this->config->get('videoMaxSize'),
                     "allowFiles" => $this->config->get('videoAllowFiles'),
                 ];
-                $result = $this->upFile($config);
+                $result = $this->_upFile($config);
                 break;
 
             /* 上传音频 */
@@ -75,7 +80,7 @@ class Ueditor extends Base
                     "maxSize"    => $this->config->get('audioMaxSize'),
                     "allowFiles" => $this->config->get('audioAllowFiles'),
                 ];
-                $result = $this->upFile($config);
+                $result = $this->_upFile($config);
                 break;
 
             /* 上传文件 */
@@ -85,7 +90,7 @@ class Ueditor extends Base
                     "maxSize"    => $this->config->get('fileMaxSize'),
                     "allowFiles" => $this->config->get('fileAllowFiles'),
                 ];
-                $result = $this->upFile($config);
+                $result = $this->_upFile($config);
                 break;
 
             /* 列出图片 */
@@ -94,7 +99,7 @@ class Ueditor extends Base
                 $listSize   = $this->config->get('imageManagerListSize');
                 $path       = $this->config->get('imageManagerListPath');
                 $get        = Request::param();
-                $result     = $this->fileList($allowFiles, $listSize, $get);
+                $result     = $this->_fileList($allowFiles, $listSize, $get);
                 break;
 
             /* 列出文件 */
@@ -103,7 +108,7 @@ class Ueditor extends Base
                 $listSize   = $this->config->get('fileManagerListSize');
                 $path       = $this->config->get('fileManagerListPath');
                 $get        = Request::param();
-                $result     = $this->fileList($allowFiles, $listSize, $get);
+                $result     = $this->_fileList($allowFiles, $listSize, $get);
                 break;
 
             /* 抓取远程文件 */
@@ -124,21 +129,24 @@ class Ueditor extends Base
                 }
 
                 foreach ($source as $imgUrl) {
-                    $remoteResult = $this->saveRemote($config, $imgUrl);
+                    $remoteResult = $this->_saveRemote($config, $imgUrl);
                     if ($remoteResult === false) {
                         array_push($failList, [
                             "state"  => $this->error,
                             "source" => htmlspecialchars($imgUrl),
                         ]);
                     } else {
-                        array_push($list, [
-                            "state"    => $remoteResult["state"],
-                            "url"      => $remoteResult["url"],
-                            "size"     => $remoteResult["size"],
-                            "title"    => htmlspecialchars($remoteResult["title"]),
-                            "original" => htmlspecialchars($remoteResult["original"]),
-                            "source"   => htmlspecialchars($imgUrl),
-                        ]);
+                        array_push(
+                            $list,
+                            [
+                                "state"    => $remoteResult["state"],
+                                "url"      => $remoteResult["url"],
+                                "size"     => $remoteResult["size"],
+                                "title"    => htmlspecialchars($remoteResult["title"]),
+                                "original" => htmlspecialchars($remoteResult["original"]),
+                                "source"   => htmlspecialchars($imgUrl),
+                            ]
+                        );
                     }
                 }
 
@@ -154,7 +162,7 @@ class Ueditor extends Base
                 break;
         }
 
-        /**错误信息 */
+        /* 错误信息 */
         if ($result === false) {
             return $this->error($this->error);
         }
@@ -173,9 +181,12 @@ class Ueditor extends Base
 
     /**
      * 上传文件的主处理方法
-     * @return mixed
+     *
+     * @param array $config 配置信息
+     *
+     * @return array
      */
-    private function upFile($config)
+    private function _upFile($config)
     {
         $file  = request()->file($this->upField);
         $check = $this->check($config, $file);
@@ -213,25 +224,43 @@ class Ueditor extends Base
     /**
      * 图片再处理(压缩,水印)
      *
-     * @param string $filePath
-     * @param string $ext
-     * @return void
+     * @param string $filePath 文件路径
+     * @param string $ext      文件后缀
+     *
+     * @return string 文件路径
      */
     protected function imageHandle($filePath, $ext)
     {
         $thumbType = $this->config->get('thumb_type', 0);
-        $quality   = $this->config->get('image_upload_quality', 80); //获取图片清晰度设置，默认是80
-        $maxLimit  = $this->config->get('image_upload_max_limit', 680); //获取图片宽高的最大限制值，0为不限制
+        //获取图片清晰度设置，默认是80
+        $quality = $this->config->get('image_upload_quality', 80);
+        //获取图片宽高的最大限制值，0为不限制
+        $maxLimit = $this->config->get('image_upload_max_limit', 680);
 
         $image = Image::open($filePath);
         if ($maxLimit > 0 && $thumbType > 0) {
-            $image->thumb($maxLimit, $maxLimit, $thumbType); //设置缩略图模式，按宽最大680或高最大680压缩
+            //设置缩略图模式，按宽最大680或高最大680压缩
+            $image->thumb($maxLimit, $maxLimit, $thumbType);
         }
         if ($this->water == 1) {
-            $font = $this->config->get('water_font_path', __DIR__ . '/../assets/zhttfs/1.ttf');
-            $image->text($this->config->get('water_text'), $font, 10, '#FFCC66', $this->config->get('water_position'), [-8, -8])->save($filePath, $ext, $quality);
+            $font = $this->config->get(
+                'water_font_path',
+                __DIR__ . '/../assets/zhttfs/1.ttf'
+            );
+            $image->text(
+                $this->config->get('water_text'),
+                $font,
+                10,
+                '#FFCC66',
+                $this->config->get('water_position'),
+                [-8, -8]
+            )->save($filePath, $ext, $quality);
         } else if ($this->water == 2) {
-            $image->water($this->config->get('water_image'), $this->config->get('water_position'), 80)->save($filePath, $ext, $quality);
+            $image->water(
+                $this->config->get('water_image'),
+                $this->config->get('water_position'),
+                80
+            )->save($filePath, $ext, $quality);
         } else {
             $image->save($filePath, $ext, $quality);
         }
@@ -241,7 +270,8 @@ class Ueditor extends Base
     /**
      * 根据文件后缀判断是不是图片
      *
-     * @param string $ext
+     * @param string $ext 文件后缀
+     *
      * @return boolean
      */
     protected function isImage($ext)
@@ -252,9 +282,12 @@ class Ueditor extends Base
 
     /**
      * 处理base64编码的图片上传
-     * @return mixed
+     *
+     * @param array $config 配置信息
+     *
+     * @return array
      */
-    private function upBase64($config)
+    private function _upBase64($config)
     {
         $base64Data = Request::post($this->upfile);
         if (empty($base64Data)) {
@@ -309,9 +342,13 @@ class Ueditor extends Base
 
     /**
      * 拉取远程图片
+     *
+     * @param array  $config    配置信息
+     * @param string $fieldName 字段名
+     *
      * @return mixed
      */
-    private function saveRemote($config, $fieldName)
+    private function _saveRemote($config, $fieldName)
     {
         $imgUrl = htmlspecialchars($fieldName);
         $imgUrl = str_replace("&amp;", "&", $imgUrl);
@@ -330,7 +367,9 @@ class Ueditor extends Base
         //格式验证(扩展名验证和Content-Type验证)
         $fileType = strtolower(strrchr(strrchr($imgUrl, '/'), '.'));
         //img链接后缀可能为空,Content-Type须为image
-        if ((!empty($fileType) && !in_array($fileType, $config['allowFiles'])) || stristr($heads['Content-Type'], "image") === -1) {
+        if ((!empty($fileType) && !in_array($fileType, $config['allowFiles']))
+            || stristr($heads['Content-Type'], "image") === -1
+        ) {
             $this->error = '链接contentType不正确';
             return false;
         }
@@ -342,13 +381,15 @@ class Ueditor extends Base
 
         //打开输出缓冲区并获取远程图片
         ob_start();
-        $context = stream_context_create([
-            'http' => array(
-                //'header' => "Referer:$httpReferer",  //突破防盗链,不可用
-                'user_agent'      => 'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.142 Safari/537.36', //突破防盗链
-                'follow_location' => false, // don't follow redirects
-            ),
-        ]);
+        $context = stream_context_create(
+            [
+                'http' => array(
+                    //'header' => "Referer:$httpReferer",  //突破防盗链,不可用
+                    'user_agent'      => 'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.142 Safari/537.36', //突破防盗链
+                    'follow_location' => false, // don't follow redirects
+                ),
+            ]
+        );
         $res     = false;
         $message = '';
         try {
@@ -415,11 +456,12 @@ class Ueditor extends Base
      * 文件列表
      *
      * @param array $allowFiles 指定的文件后缀数组
-     * @param int $listSize 列表分页数量
-     * @param array $get ['size'=>xxx,'start'=>xxx]
+     * @param int   $listSize   列表分页数量
+     * @param array $get        ['size'=>xxx,'start'=>xxx]
+     *
      * @return array
      */
-    private function fileList($allowFiles, $listSize, $get)
+    private function _fileList($allowFiles, $listSize, $get)
     {
         $dirname = path_join($this->rootPath, 'ueditor');
         if ($this->uid != $this->config->get('super_admin_uid', 'admin')) {
@@ -434,7 +476,7 @@ class Ueditor extends Base
         $end   = $start + $size;
 
         /* 获取文件列表 */
-        $files = $this->getFiles($dirname, $allowFiles);
+        $files = $this->_getFiles($dirname, $allowFiles);
         if (!count($files)) {
             return [
                 "state" => "no match file",
@@ -445,8 +487,9 @@ class Ueditor extends Base
         }
 
         /* 获取指定范围的列表 */
-        $len = count($files);
-        for ($i = min($end, $len) - 1, $list = array(); $i < $len && $i >= 0 && $i >= $start; $i--) {
+        $len  = count($files);
+        $list = [];
+        for ($i = min($end, $len) - 1; $i < $len && $i >= 0 && $i >= $start; $i--) {
             $list[] = $files[$i];
         }
 
@@ -463,12 +506,14 @@ class Ueditor extends Base
 
     /**
      * 遍历获取目录下的指定类型的文件
-     * @param string $path 文件路径
+     *
+     * @param string $path       文件路径
      * @param string $allowFiles 指定的文件后缀,以|分隔的文本
-     * @param array $files 文件数组
+     * @param array  $files      文件数组
+     *
      * @return array
      */
-    private function getFiles($path, $allowFiles, &$files = array())
+    private function _getFiles($path, $allowFiles, &$files = [])
     {
         if (!is_dir($path)) {
             return [];
@@ -482,11 +527,15 @@ class Ueditor extends Base
             if ($file != '.' && $file != '..') {
                 $path2 = $path . $file;
                 if (is_dir($path2)) {
-                    $this->getFiles($path2, $allowFiles, $files);
+                    $this->_getFiles($path2, $allowFiles, $files);
                 } else {
                     if (preg_match("/\.(" . $allowFiles . ")$/i", $file)) {
                         $files[] = array(
-                            'url'   => preg_replace('/(.*)upload/i', '/upload', $path2),
+                            'url'   => preg_replace(
+                                '/(.*)upload/i',
+                                '/upload',
+                                $path2
+                            ),
                             'mtime' => filemtime($path2),
                         );
                     }
@@ -499,7 +548,9 @@ class Ueditor extends Base
 
     /**
      * [formatUrl 格式化url，用于将getFiles返回的文件路径进行格式化，起因是中文文件名的不支持浏览]
-     * @param  array $files [文件数组]
+     *
+     * @param array $files [文件数组]
+     *
      * @return array   [格式化后的文件数组]
      */
     public static function formatUrl($files)
@@ -528,6 +579,7 @@ class Ueditor extends Base
      * 去除后缀名前面的.,例".exe"=>"exe"
      *
      * @param array $exts 文件后缀数组
+     *
      * @return array
      */
     public static function formatExts(array $exts): array
@@ -544,8 +596,9 @@ class Ueditor extends Base
      * 1. 验证文件大小
      * 2. 验证文件后缀
      *
-     * @param array $config
-     * @param Object $file
+     * @param array  $config 配置信息
+     * @param Object $file   文件对象
+     *
      * @return bool
      */
     protected function check($config, $file)

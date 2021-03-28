@@ -2,10 +2,13 @@
 
 namespace bingher\ueditor\controller;
 
+/**
+ * DEMO 控制器
+ */
 class Demo
 {
     /**
-     * ue_setting demo
+     * 配置页面 ue_setting demo
      *
      * @return \think\Response\Html;
      */
@@ -15,7 +18,7 @@ class Demo
     }
 
     /**
-     * ue_view demo
+     * 使用示例 ue_view demo
      *
      * @return \think\Response\Html;
      */

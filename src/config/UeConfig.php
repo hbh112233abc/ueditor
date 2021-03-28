@@ -13,6 +13,14 @@ class UeConfig
 {
     protected $config;
     protected $ueditor;
+
+    /**
+     * 构造函数
+     *
+     * @param array $config 配置信息,默认:[]
+     *
+     * @return void
+     */
     public function __construct($config = [])
     {
         try {
@@ -27,9 +35,19 @@ class UeConfig
         }
         $this->config = $userConfig;
 
-        $this->ueditor                   = include_once __DIR__ . '/ueditor.php';
-        $this->ueditor['imageMaxSize']   = $this->ueditor['scrawlMaxSize']   = $this->ueditor['catcherMaxSize']   = $this->config['max_image_size'];
-        $this->ueditor['imageFieldName'] = $this->ueditor['scrawlFieldName'] = $this->ueditor['catcherFieldName'] = $this->ueditor['videoFieldName'] = $this->ueditor['fileFieldName'] = $this->config['upload_field_name'];
+        $this->ueditor = include_once __DIR__ . '/ueditor.php';
+        //默认最大图片限制
+        $defaultMaxImageSize             = $this->config['max_image_size'];
+        $this->ueditor['imageMaxSize']   = $defaultMaxImageSize;
+        $this->ueditor['scrawlMaxSize']  = $defaultMaxImageSize;
+        $this->ueditor['catcherMaxSize'] = $defaultMaxImageSize;
+        //文件上传字段名
+        $defaultUploadFieldName            = $this->config['upload_field_name'];
+        $this->ueditor['imageFieldName']   = $defaultUploadFieldName;
+        $this->ueditor['scrawlFieldName']  = $defaultUploadFieldName;
+        $this->ueditor['catcherFieldName'] = $defaultUploadFieldName;
+        $this->ueditor['videoFieldName']   = $defaultUploadFieldName;
+        $this->ueditor['fileFieldName']    = $defaultUploadFieldName;
 
         $this->config = array_merge($this->ueditor, $this->config);
     }
@@ -44,6 +62,13 @@ class UeConfig
         return json($this->ueditor);
     }
 
+    /**
+     * 初始化文件上传配置
+     *
+     * @param string $diskName disk名,默认:ueditor
+     *
+     * @return \think\filesystem\Driver
+     */
     public function initFilesystem(string $diskName = 'ueditor')
     {
         $fsConfig = Config::get('filesystem');
@@ -67,8 +92,9 @@ class UeConfig
     /**
      * 获取配置
      *
-     * @param string $name
-     * @param string $default
+     * @param string $name    配置项名
+     * @param string $default 默认值
+     *
      * @return string|int|array
      */
     public function get(string $name, $default = '')
