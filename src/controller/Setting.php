@@ -20,10 +20,10 @@ class Setting extends Base
      */
     public function index()
     {
-        if (!$this->tableExists($this->tableName)) {
+        if (!$this->tableExists('ueditor_config')) {
             return '配置信息表不存在!';
         }
-        $config = Db::table($this->tableName)->column('value,remark', 'name');
+        $config = Db::name('ueditor_config')->column('value,remark', 'name');
         $input  = [
             Elm::number('max_image_size', '上传图片限制', $config['max_image_size']['value'])->min(10240)->max(512000000)->step(10240)->info($config['max_image_size']['remark']),
             Elm::number('max_file_size', '上传文件限制', $config['max_file_size']['value'])->min(10240)->max(512000000)->step(10240)->info($config['max_file_size']['remark']),
@@ -104,7 +104,7 @@ class Setting extends Base
             if ($k == 'filesystem') {
                 $v = json_encode($v);
             }
-            Db::table($this->tableName)->where('name', $k)->update(['value' => $v]);
+            Db::name('ueditor_config')->where('name', $k)->update(['value' => $v]);
         }
         cache('ueditor_config', null);
         return json(['code' => 200, 'msg' => '更新成功']);
@@ -119,6 +119,10 @@ class Setting extends Base
      */
     protected function tableExists(string $tableName = 'ueditor_config')
     {
+        $prefix = config('database.connections.mysql.prefix');
+        if (!empty($prefix) && strpos($prefix, $tableName) !== 0) {
+            $tableName = $prefix . $tableName;
+        }
         $res = Db::query('show tables like "' . $tableName . '";');
         return !empty($res);
     }

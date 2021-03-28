@@ -10,13 +10,11 @@ use think\facade\Config;
  */
 class Base
 {
-    protected $config    = [];
-    protected $tableName = 'ueditor_config';
+    protected $config = [];
 
     public function __construct()
     {
-        $this->tableName = Config::get('ueditor.table_name', 'ueditor_config');
-        $this->config    = new UeConfig();
+        $this->config = new UeConfig();
         if ($this->config->get('auth_control')) {
             if (!call_user_func($this->config->get('auth_control'))) {
                 throw new \think\exception\HttpResponseException($this->error('auth error'));

@@ -16,8 +16,7 @@ class UeConfig
     public function __construct($config = [])
     {
         try {
-            $tableName  = Config::get('ueditor.table_name', 'ueditor_config');
-            $userConfig = Db::table($tableName)->cache('ueditor_config', 600)
+            $userConfig = Db::name('ueditor_config')->cache('ueditor_config', 600)
                 ->column('value', 'name');
         } catch (\Throwable $th) {
             $userConfig = Config::get('ueditor', []);
