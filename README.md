@@ -54,6 +54,28 @@ php think migrate:run
 如果有做数据迁移,将以数据库中的`ueditor_config`配置为主,你可以访问`http://你的域名/ueditor/setting/index`进行配置,示例:
 ![配置页面](./assets/images/setting.png)
 
+> 使用独立配置的`filesystem`
+配置`config/filesystem.php`增加`ueditor`的配置项,示例:
+```
+return [
+    'default' => 'local',
+    'disks'   => [
+        ...
+        'ueditor' => [
+            'type'         => 'aliyun',
+            'accessId'     => 'aliyun OSS accessId',
+            'accessSecret' => 'aliyun OSS accessSecret',
+            'endpoint'     => 'aliyun OSS endpoint',
+            'bucket'       => 'aliyun OSS bucket',
+            'url'          => 'aliyun OSS url', //不要斜杠结尾，此处为URL地址域名。
+        ],
+```
+> 以上配置引用了`thans/thinkphp-filesystem-cloud`,请自行安装
+```
+composer require thans/thinkphp-filesystem-cloud
+```
+
+
 你也可以在你的网站管理后台的某个系统设置的页面模板中使用`{:ue_setting()}`就可以自动生成以上的表单进行配置了
 
 
