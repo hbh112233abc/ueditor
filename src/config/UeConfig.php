@@ -35,7 +35,7 @@ class UeConfig
         }
         $this->config = $userConfig;
 
-        $this->ueditor = include_once __DIR__ . '/ueditor.php';
+        $this->ueditor = include __DIR__ . '/ueditor.php';
         //默认最大图片限制
         $defaultMaxImageSize             = $this->config['max_image_size'];
         $this->ueditor['imageMaxSize']   = $defaultMaxImageSize;
