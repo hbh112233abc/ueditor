@@ -209,13 +209,12 @@ class Ueditor extends Base
                 return false;
             }
         }
-        $saveFile = new \SplFileInfo($filePath);
-        $data     = [
+        $data = [
             'url'      => path_join($this->urlPath, $saveName),
             'title'    => $_FILES[$this->upField]['name'],
             'original' => $_FILES[$this->upField]['name'],
             'type'     => '.' . $ext,
-            'size'     => $saveFile->getSize(),
+            'size'     => $file->getSize(),
         ];
 
         return $data;
