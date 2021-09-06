@@ -11,15 +11,18 @@ class UeditorService extends Service
 {
     public function boot(Route $route)
     {
+        $middleware = [
+            \think\middleware\SessionInit::class,
+            \think\middleware\AllowCrossDomain::class,
+        ];
         $route->rule('ueditor/index', "\\bingher\\ueditor\\controller\\Ueditor@index")
-            ->middleware(\think\middleware\SessionInit::class);
-
+            ->middleware($middleware);
         $route->rule('ueditor/setting/index', "\\bingher\\ueditor\\controller\\Setting@index")
-            ->middleware(\think\middleware\SessionInit::class);
+            ->middleware($middleware);
         $route->rule('ueditor/setting/save', "\\bingher\\ueditor\\controller\\Setting@save")
-            ->middleware(\think\middleware\SessionInit::class);
+            ->middleware($middleware);
         $route->rule('ueditor/setting/upload_imgage', "\\bingher\\ueditor\\controller\\Setting@uploadImage")
-            ->middleware(\think\middleware\SessionInit::class);
+            ->middleware($middleware);
 
         $route->rule('ueditor/demo/view', "\\bingher\\ueditor\\controller\\Demo@view");
         $route->rule('ueditor/demo/setting', "\\bingher\\ueditor\\controller\\Demo@setting");
