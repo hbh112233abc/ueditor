@@ -11918,6 +11918,7 @@ UE.plugins['link'] = function(){
 
             }
             a[browser.ie ? 'innerText' : 'textContent'] = text;
+            a['rel'] = "noopener noreferrer";
             range.insertNode(a).selectNode( a );
         } else {
             range.applyInlineStyle( 'a', opt );
@@ -11930,6 +11931,7 @@ UE.plugins['link'] = function(){
             opt._href && (opt._href = utils.unhtml(opt._href,/[<">]/g));
             opt.href && (opt.href = utils.unhtml(opt.href,/[<">]/g));
             opt.textValue && (opt.textValue = utils.unhtml(opt.textValue,/[<">]/g));
+            opt.rel = "noopener noreferrer";
             doLink(range=this.selection.getRange(),opt,this);
             //闭合都不加占位符，如果加了会在a后边多个占位符节点，导致a是图片背景组成的列表，出现空白问题
             range.collapse().select(true);
@@ -12009,9 +12011,9 @@ UE.plugins['insertframe'] = function() {
  * 赫蹏排版美化
  */
 UE.plugins['heti'] = function(){
-  var me = this;    
+  var me = this;
   UE.commands["heti"] = {
-      execCommand: function (cmd) {             
+      execCommand: function (cmd) {
           var hetiDoms = me.document.querySelectorAll('.heti');
           // var range = me.selection.getRange();
           // var start = range.startContainer,end = range.endContainer;
@@ -12029,7 +12031,7 @@ UE.plugins['heti'] = function(){
             console.log('heti off');
           }
 
-          
+
       },
       queryCommandState:function(){
         var hetiDoms = me.document.querySelectorAll('.heti');
@@ -12041,8 +12043,8 @@ UE.plugins['heti'] = function(){
         return state;
       }
   };
-  
-  me.addListener("ready",function(){      
+
+  me.addListener("ready",function(){
       utils.loadFile(document,{
           tag : "link",
           rel : "stylesheet",
@@ -28882,7 +28884,7 @@ UE.ui = baidu.editor.ui = {};
         });
         return ui;
     };
-    
+
     editorui.paragraph = function (editor, list, title) {
         title = editor.options.labelMap['paragraph'] || editor.getLang("labelMap.paragraph") || '';
         list = editor.options['paragraph'] || [];
@@ -29545,7 +29547,7 @@ UE.ui = baidu.editor.ui = {};
                                 html += '<div style="height:5px;"></div>'
                             }
                             html += popup.formatHtml(
-                                '<nobr>' + editor.getLang("anthorMsg") + ': <a target="_blank" href="' + url + '" title="' + url + '" >' + txt + '</a>' +
+                                '<nobr>' + editor.getLang("anthorMsg") + ': <a target="_blank" rel="noopener noreferrer" href="' + url + '" title="' + url + '" >' + txt + '</a>' +
                                     ' <span class="edui-clickable" onclick="$$._onEditButtonClick();">' + editor.getLang("modify") + '</span>' +
                                     ' <span class="edui-clickable" onclick="$$._onRemoveButtonClick(\'unlink\');"> ' + editor.getLang("clear") + '</span></nobr>');
                             popup.showAnchor(link);
@@ -30182,7 +30184,7 @@ UE.registerUI('autosave', function(editor) {
  * 用于插入社交相关账号信息
  */
 UE.plugins['social'] = function(){ 
-    var me=this;  
+    var me=this; 
     me.setOpt('social',[
         {label:'昵称',value:'hbh',type:'text'},
         {label:'微信',value:'huangbinghe',type:'text'},
@@ -30190,17 +30192,17 @@ UE.plugins['social'] = function(){ 
         {label:'邮箱',value:'hbh112233abc@163.com',type:'mail'},
         {label:'二维码',value:'https://p.ssl.qhimg.com/d/inn/0444533a/Snip20160525_6.png',type:'img'},
     ]);
-    //注册鼠标和键盘事件  
+    //注册鼠标和键盘事件 
     me.addListener('mousedown',function(){}); 
     me.addListener('keydown',function(type,evt){}); 
     me.addListener('mouseup',function(){}); 
 
     me.commands['social'] = {
-        //查询当前命令状态  
+        //查询当前命令状态 
         queryCommandState: function(cmdName){
             // console.log('query cmd state:',cmdName);
         },
-        //命令执行主体  
+        //命令执行主体 
         execCommand: function(cmdName,item){
             // console.log(item);
             var html = '<p>';
@@ -30219,18 +30221,18 @@ UE.plugins['social'] = function(){ 
                     break;
                 case 'mail':
                     html += '<a href="mailto:' + item.value + '" style="' + (item.style || '') + '">' + item.value + '</a>';
-                    break;  
+                    break;
                 case 'img':
                     html += '<img src="' + item.value + '" style="' + (item.style || '') + '">';
                     break;
                 default:
                     html += item.value;
-                    break;                  
+                    break;
             }
             html += '</p>';
             me.execCommand('insertHtml',html);
         },
-        //获取命令执行结果  
+        //获取命令执行结果 
         queryCommandValue: function(cmdName){
             return me.options.labelMap['social'] || me.getLang("labelMap.social") || '社交账号';
         }, 
