@@ -107,3 +107,8 @@ function ue_view(string $name = 'ueditor',string $content = '',array $config = [
 > http://你的域名/ueditor/demo/setting
 
 ![demo_ue_setting](./assets/images/demo_ue_setting.png)
+
+## 开发
+- js压缩
+    - vscode 安装minify
+    - 在js页面执行`Minify`
